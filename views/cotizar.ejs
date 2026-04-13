@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotizar Proyecto - SVO</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --accent-color: #00aeef;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --input-bg: #0f172a;
+            --wa-color: #25d366;
+            --fb-color: #1877F2;
+            --mail-color: #ea4335;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: #ffffff;
+            border-bottom: 2px solid #f3f4f6;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 8%;
+            box-sizing: border-box;
+        }
+
+        .logo-link { display: flex; align-items: center; text-decoration: none; gap: 15px; }
+        .logo-img { height: 55px; width: auto; }
+        .logo-text { color: #003366; font-family: 'Arial Black', sans-serif; font-size: 0.95rem; line-height: 1.1; text-transform: uppercase; font-weight: 900; }
+
+        nav ul { list-style: none; display: flex; gap: 30px; margin: 0; padding: 0; }
+        nav ul li a { text-decoration: none; color: #1f2937; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; transition: 0.3s; }
+        nav ul li a.active, nav ul li a:hover { color: var(--accent-color); }
+
+        /* --- CONTENEDOR DEL FORMULARIO --- */
+        .form-section {
+            padding: 160px 5% 80px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .form-container {
+            background: var(--card-bg);
+            padding: 45px;
+            border-radius: 25px;
+            width: 100%;
+            max-width: 650px;
+            border: 1px solid rgba(56, 189, 248, 0.1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .form-container h2 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .form-container h2 span { color: var(--accent-color); }
+
+        .form-container p {
+            color: #94a3b8;
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 14px;
+            background: var(--input-bg);
+            border: 1px solid #334155;
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 10px rgba(0, 174, 239, 0.2);
+        }
+
+        .btn-submit {
+            background: var(--accent-color);
+            color: white;
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+            text-transform: uppercase;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 174, 239, 0.3);
+            filter: brightness(1.1);
+        }
+
+        /* --- CONTACT MENU (FLOTANTE) --- */
+        .contact-menu { position: fixed; bottom: 25px; right: 25px; display: flex; flex-direction: column-reverse; align-items: center; gap: 15px; z-index: 2000; }
+        .main-contact { width: 65px; height: 65px; background-color: var(--wa-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; box-shadow: 0 6px 15px rgba(0,0,0,0.4); cursor: pointer; transition: 0.3s; }
+        .extra-contact { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; font-size: 1.4rem; opacity: 0; visibility: hidden; transform: translateY(20px); transition: 0.4s; position: relative; }
+        .btn-fb { background-color: var(--fb-color); }
+        .btn-mail { background-color: var(--mail-color); }
+        .contact-menu:hover .extra-contact { opacity: 1; visibility: visible; transform: translateY(0); }
+
+        @media (max-width: 992px) {
+            header { padding: 10px 4%; flex-direction: column; }
+            nav ul { margin-top: 15px; gap: 15px; }
+            .form-section { padding-top: 220px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="/" class="logo-link">
+            <img src="/img/logo.png" alt="SVO Logo" class="logo-img">
+            <div class="logo-text">SISTEMAS DE<br>VIDEOVIGILANCIA<br>ORIZABA</div>
+        </a>
+        <nav>
+            <ul>
+                <li><a href="/">INICIO</a></li>
+                <li><a href="/#servicios">SERVICIOS</a></li>
+                <li><a href="/catalogo">CATÁLOGO</a></li>
+                <li><a href="/#nosotros">NOSOTROS</a></li>
+                <li><a href="/cotizar" class="active">COTIZAR</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="form-section">
+        <div class="form-container">
+            <h2>Solicitar <span>Cotización</span></h2>
+            <p>Déjanos tus datos y nos pondremos en contacto para diseñar tu sistema de seguridad ideal.</p>
+            
+            <form id="cotizacionForm">
+                <div class="form-group">
+                    <label>Nombre Completo</label>
+                    <input type="text" id="nombre" placeholder="Ej. Juan Pérez" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Ciudad / Municipio</label>
+                    <input type="text" id="ciudad" placeholder="Ej. Orizaba, Ver." required>
+                </div>
+
+                <div class="form-group">
+                    <label>Teléfono / WhatsApp</label>
+                    <input type="tel" id="telefono" placeholder="Ej. 272 000 0000" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Tipo de Proyecto</label>
+                    <select id="proyecto" required>
+                        <option value="" disabled selected>Selecciona una opción</option>
+                        <option value="Hogar">Seguridad para el Hogar</option>
+                        <option value="Negocio">Seguridad para Negocio / Local</option>
+                        <option value="Industrial">Seguridad Industrial</option>
+                        <option value="Mantenimiento">Mantenimiento de Cámaras</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Detalles del Requerimiento</label>
+                    <textarea id="detalles" rows="4" placeholder="¿Cuántas cámaras necesitas?"></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">Enviar Solicitud</button>
+            </form>
+        </div>
+    </section>
+
+    <div class="contact-menu">
+        <a href="https://wa.me/522721569109" class="main-contact" target="_blank"><i class="fab fa-whatsapp"></i></a>
+        <a href="mailto:sistemasvorizaba@gmail.com" class="extra-contact btn-mail" data-label="Correo"><i class="fas fa-envelope"></i></a>
+        <a href="https://facebook.com/share/1Avxru13Ca/" class="extra-contact btn-fb" target="_blank" data-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+    </div>
+
+    <script>
+        document.getElementById('cotizacionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const nombre = document.getElementById('nombre').value;
+            const ciudad = document.getElementById('ciudad').value;
+            const telefono = document.getElementById('telefono').value;
+            const proyecto = document.getElementById('proyecto').value;
+            const detalles = document.getElementById('detalles').value;
+
+            const telefonoSVO = "522721569109"; 
+
+            const mensaje = `Hola SVO Orizaba, me gustaría una cotización:%0A%0A` +
+                            `*Nombre:* ${nombre}%0A` +
+                            `*Ciudad:* ${ciudad}%0A` +
+                            `*Teléfono:* ${telefono}%0A` +
+                            `*Proyecto:* ${proyecto}%0A` +
+                            `*Detalles:* ${detalles}`;
+
+            const url = `https://wa.me/${telefonoSVO}?text=${mensaje}`;
+
+            window.open(url, '_blank');
+        });
+    </script>
+
+</body>
+</html>

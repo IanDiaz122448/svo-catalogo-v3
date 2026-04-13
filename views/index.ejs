@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVO - Sistemas de Videovigilancia Orizaba</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
+    
+    <style>
+        :root {
+            --accent-color: #38bdf8; /* Azul SVO */
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --wa-color: #25d366;
+            --fb-color: #1877F2;
+            --mail-color: #ea4335;
+        }
+
+        /* --- SECCIÓN SERVICIOS --- */
+        #servicios {
+            background: var(--bg-dark);
+            padding: 100px 5%;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 50px;
+            max-width: 1200px;
+            margin: 50px auto 0;
+        }
+
+        .service-item {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(56, 189, 248, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .service-item:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent-color);
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.1);
+        }
+
+        .service-icon-circle {
+            width: 50px;
+            height: 50px;
+            background: rgba(56, 189, 248, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .service-icon-circle i {
+            color: var(--accent-color);
+            font-size: 1.5rem;
+        }
+
+        /* --- SECCIÓN NOSOTROS --- */
+        #nosotros {
+            background: #111827;
+            padding: 100px 5%;
+        }
+
+        .presentation-text {
+            max-width: 900px;
+            margin: 0 auto 60px;
+            font-size: 1.15rem;
+            color: #94a3b8;
+            line-height: 1.8;
+            text-align: center;
+        }
+
+        .mission-vision-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            max-width: 1100px;
+            margin: 0 auto 60px;
+        }
+
+        .mv-card {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(56, 189, 248, 0.1);
+            transition: 0.3s;
+        }
+
+        .mv-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+        }
+
+        .mv-icon {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 1000px;
+            margin: 40px auto 0;
+        }
+
+        .value-item {
+            background: rgba(56, 189, 248, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(56, 189, 248, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: 0.3s;
+        }
+
+        .value-item:hover {
+            background: var(--accent-color);
+            color: #000;
+        }
+
+        .value-item i { color: var(--accent-color); }
+        .value-item:hover i { color: #000; }
+
+        /* --- MENÚ DE CONTACTO DESPLEGABLE --- */
+        .contact-menu {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .main-contact {
+            width: 65px;
+            height: 65px;
+            background-color: var(--wa-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .extra-contact {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            font-size: 1.4rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .btn-fb { background-color: var(--fb-color); transition-delay: 0.05s; }
+        .btn-mail { background-color: var(--mail-color); transition-delay: 0.1s; }
+
+        .contact-menu:hover .extra-contact {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .contact-menu:hover .main-contact {
+            transform: scale(1.1) rotate(15deg);
+        }
+
+        .extra-contact:hover {
+            transform: scale(1.2) !important;
+        }
+
+        .extra-contact::before {
+            content: attr(data-label);
+            position: absolute;
+            right: 70px;
+            background: rgba(0,0,0,0.85);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: 0.3s;
+            pointer-events: none;
+        }
+
+        .extra-contact:hover::before {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .mission-vision-container, .values-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="/" class="logo-container">
+            <img src="/img/logo.png" alt="SVO Logo" class="logo-img">
+            <span class="logo-text">Sistemas de Videovigilancia Orizaba</span>
+        </a>
+        <nav>
+            <ul>
+                <li><a href="/" style="color:var(--accent-color);">Inicio</a></li>
+                <li><a href="#servicios">Servicios</a></li>
+                <li><a href="/catalogo">Catálogo</a></li>
+                <li><a href="#nosotros">Nosotros</a></li>
+                <li><a href="/cotizar">Cotizar</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="section-padding" style="background: radial-gradient(circle, #1e293b, #0f172a); min-height: 85vh; display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center;">
+        <h1>Seguridad que <span>puedes ver</span></h1>
+        <p style="font-size: 1.2rem; color: #94a3b8; margin-bottom: 40px; max-width: 700px;">Expertos en venta, instalación y mantenimiento de cámaras en Orizaba y la región.</p>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+            <a href="/cotizar" class="btn">Cotizar Proyecto</a>
+            <a href="/catalogo" class="btn btn-outline">Ver Marcas</a>
+        </div>
+    </section>
+
+    <section id="servicios">
+        <div style="text-align: center;">
+            <h2>Nuestros <span>Servicios</span></h2>
+            <p style="color: #94a3b8;">Soluciones integrales de seguridad electrónica.</p>
+        </div>
+
+        <div class="services-grid">
+            <div class="service-item">
+                <div class="service-icon-circle"><i class="fas fa-camera"></i></div>
+                <h3>Instalación de Cámaras</h3>
+                <p>Montaje profesional de sistemas CCTV de alta definición.</p>
+            </div>
+            <div class="service-item">
+                <div class="service-icon-circle"><i class="fas fa-server"></i></div>
+                <h3>Configuración DVR/NVR</h3>
+                <p>Optimización de grabación y almacenamiento en la nube.</p>
+            </div>
+            <div class="service-item">
+                <div class="service-icon-circle"><i class="fas fa-tools"></i></div>
+                <h3>Mantenimiento Técnico</h3>
+                <p>Servicio preventivo y correctivo para tus equipos.</p>
+            </div>
+            <div class="service-item">
+                <div class="service-icon-circle"><i class="fas fa-link"></i></div>
+                <h3>Integración de Sistemas</h3>
+                <p>Conectamos todos tus equipos para un control total.</p>
+            </div>
+            <div class="service-item">
+                <div class="service-icon-circle"><i class="fas fa-sync-alt"></i></div>
+                <h3>Actualización de Equipos</h3>
+                <p>Migración de sistemas antiguos a tecnología IP moderna.</p>
+            </div>
+            <div class="service-item">
+                <div class="service-icon-circle"><i class="fas fa-mobile-alt"></i></div>
+                <h3>Configuración Remota</h3>
+                <p>Visualización en tiempo real desde tu celular o tablet.</p>
+            </div>
+            <div class="service-item">
+                <div class="service-icon-circle"><i class="fas fa-network-wired"></i></div>
+                <h3>Cableado Estructurado</h3>
+                <p>Instalaciones certificadas de voz, datos y video.</p>
+            </div>
+            <div class="service-item">
+                <div class="service-icon-circle"><i class="fas fa-user-shield"></i></div>
+                <h3>Asesoría y Estudios</h3>
+                <p>Diseño de proyectos de seguridad basados en tus necesidades.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="nosotros">
+        <div style="text-align: center;">
+            <h2>Sobre <span>Nosotros</span></h2>
+        </div>
+        
+        <p class="presentation-text">
+            Sistemas de Videovigilancia Orizaba es una empresa especializada en soluciones tecnológicas de seguridad, enfocada en la venta, instalación y mantenimiento de cámaras de videovigilancia de todas las marcas.
+        </p>
+
+        <div class="mission-vision-container">
+            <div class="mv-card">
+                <i class="fas fa-rocket mv-icon"></i>
+                <h3>Misión</h3>
+                <p>Brindar soluciones de seguridad confiables y eficientes mediante equipos de videovigilancia de alta calidad y un servicio profesional.</p>
+            </div>
+            <div class="mv-card">
+                <i class="fas fa-eye mv-icon"></i>
+                <h3>Visión</h3>
+                <p>Ser la empresa líder en videovigilancia de la región, reconocida por su innovación tecnológica y servicio personalizado.</p>
+            </div>
+        </div>
+
+        <div style="text-align: center;">
+            <h3 style="color: #fff; margin-bottom: 30px;">Nuestros Valores</h3>
+            <div class="values-grid">
+                <div class="value-item"><i class="fas fa-user-tie"></i><span>Profesionalismo</span></div>
+                <div class="value-item"><i class="fas fa-handshake"></i><span>Honestidad</span></div>
+                <div class="value-item"><i class="fas fa-check-circle"></i><span>Responsabilidad</span></div>
+                <div class="value-item"><i class="fas fa-lock"></i><span>Confidencialidad</span></div>
+                <div class="value-item"><i class="fas fa-lightbulb"></i><span>Innovación</span></div>
+                <div class="value-item"><i class="fas fa-star"></i><span>Calidad</span></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="contact-menu">
+        <a href="https://wa.me/522721569109" class="main-contact" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+        <a href="mailto:sistemasvorizaba@gmail.com" class="extra-contact btn-mail" data-label="Enviar Correo">
+            <i class="fas fa-envelope"></i>
+        </a>
+        <a href="https://facebook.com/share/1Avxru13Ca/" class="extra-contact btn-fb" target="_blank" data-label="Facebook">
+            <i class="fab fa-facebook-f"></i>
+        </a>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVO - Panel de Administración</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --accent-color: #38bdf8;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+        }
+
+        body { 
+            background: var(--bg-dark); 
+            color: white; 
+            font-family: 'Segoe UI', sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px; 
+        }
+
+        .form-card { 
+            background: var(--card-bg); 
+            padding: 40px; 
+            border-radius: 20px; 
+            width: 100%; 
+            max-width: 600px; 
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+
+        h2 { 
+            text-align: center; 
+            color: var(--accent-color); 
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-group { margin-bottom: 20px; }
+        
+        label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-size: 0.85rem; 
+            color: #94a3b8; 
+            font-weight: 600;
+        }
+
+        input, textarea, select { 
+            width: 100%; 
+            padding: 12px 15px; 
+            background: #0f172a; 
+            border: 1px solid #334155; 
+            color: white; 
+            border-radius: 10px; 
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--accent-color);
+            outline: none;
+            box-shadow: 0 0 8px rgba(56, 189, 248, 0.2);
+        }
+
+        .file-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        button { 
+            background: linear-gradient(135deg, #00aeef, #0ea5e9); 
+            color: white; 
+            border: none; 
+            padding: 18px; 
+            width: 100%; 
+            border-radius: 12px; 
+            font-weight: 800; 
+            cursor: pointer; 
+            text-transform: uppercase;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+
+        button:hover { 
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 174, 239, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .hint { font-size: 0.75rem; color: #64748b; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <div class="form-card">
+        <h2><i class="fas fa-plus-circle"></i> Nuevo Producto SVO</h2>
+        
+        <form action="/admin/subir" method="POST" enctype="multipart/form-data">
+            
+            <div class="input-group">
+                <label>Seleccionar Marca</label>
+                <select name="marca" required>
+                    <option value="Hikvision">Hikvision</option>
+                    <option value="HiLook">HiLook</option>
+                    <option value="Dahua">Dahua</option>
+                    <option value="Ezviz">Ezviz</option>
+                    <option value="Imou">Imou</option>
+                    <option value="Uniview">Uniview</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Título del Kit / Producto</label>
+                <input type="text" name="titulo" placeholder="Ej: Kit ColorVu TurboHD 1080p" required>
+            </div>
+
+            <div class="input-group">
+                <label>Detalles Rápidos (Debajo del título)</label>
+                <input type="text" name="subtitulo" placeholder="Ej: DVR 4 Canales • 4 Cámaras • Accesorios" required>
+            </div>
+
+            <div class="input-group">
+                <label>Modelo de Serie</label>
+                <input type="text" name="modelo" placeholder="Ej: KH1080P4BC" required>
+            </div>
+
+            <div class="input-group">
+                <label>Características (Una por cada línea)</label>
+                <textarea name="caracteristicas" rows="5" placeholder="Cámaras con visión a color 24/7&#10;Visualización remota Hik-Connect&#10;Incluye instalación básica" required></textarea>
+                <div class="hint">Cada salto de línea se convertirá en un punto de la lista.</div>
+            </div>
+
+            <div class="file-grid">
+                <div class="input-group">
+                    <label>Imagen Principal (Caja/Kit)</label>
+                    <input type="file" name="imagen1" accept="image/*" required>
+                </div>
+                <div class="input-group">
+                    <label>Imagen Detalle (Cámaras)</label>
+                    <input type="file" name="imagen2" accept="image/*" required>
+                </div>
+            </div>
+
+            <button type="submit"><i class="fas fa-cloud-upload-alt"></i> PUBLICAR EN CATÁLOGO</button>
+        </form>
+    </div>
+</body>
+</html>

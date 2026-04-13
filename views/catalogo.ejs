@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo SVO - Fichas Técnicas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --accent-color: #00aeef;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --card-border: rgba(56, 189, 248, 0.15);
+            --info-box-bg: rgba(255, 255, 255, 0.03);
+            --wa-color: #25d366;
+            --fb-color: #1877F2;
+            --mail-color: #ea4335;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+        }
+
+        /* --- HEADER LITERAL --- */
+        header {
+            background: #ffffff;
+            border-bottom: 2px solid #f3f4f6;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 8%;
+            box-sizing: border-box;
+        }
+
+        .logo-link { display: flex; align-items: center; text-decoration: none; gap: 15px; }
+        .logo-img { height: 55px; width: auto; }
+        .logo-text { color: #003366; font-family: 'Arial Black', sans-serif; font-size: 0.95rem; line-height: 1.1; text-transform: uppercase; font-weight: 900; }
+
+        nav ul { list-style: none; display: flex; gap: 30px; margin: 0; padding: 0; }
+        nav ul li a { text-decoration: none; color: #1f2937; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; transition: 0.3s; }
+        nav ul li a.active, nav ul li a:hover { color: var(--accent-color); }
+
+        /* --- MENÚ DE CONTACTO FLOTANTE --- */
+        .contact-menu { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column-reverse; align-items: center; gap: 15px; z-index: 2000; }
+        .main-contact { width: 65px; height: 65px; background-color: var(--wa-color); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; cursor: pointer; text-decoration: none; box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.3s; }
+        .extra-contact { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; font-size: 1.4rem; opacity: 0; visibility: hidden; transform: translateY(20px); transition: 0.4s; position: relative; }
+        .btn-fb { background-color: var(--fb-color); }
+        .btn-mail { background-color: var(--mail-color); }
+        .contact-menu:hover .extra-contact { opacity: 1; visibility: visible; transform: translateY(0); }
+        .extra-contact::before { content: attr(data-label); position: absolute; right: 70px; background: rgba(0,0,0,0.8); color: white; padding: 6px 14px; border-radius: 8px; font-size: 0.85rem; opacity: 0; transition: 0.3s; white-space: nowrap; pointer-events: none; }
+        .extra-contact:hover::before { opacity: 1; }
+
+        /* --- ESTRUCTURA DEL SLIDER --- */
+        .slider-wrapper { display: flex; align-items: center; justify-content: center; gap: 20px; max-width: 1100px; margin: 50px auto; padding: 0 20px; }
+        .product-slide { display: none; width: 100%; animation: fadeIn 0.5s ease; }
+        .product-slide.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        .ficha-tecnica { background-color: var(--card-bg); padding: 40px; border-radius: 24px; border: 1px solid var(--card-border); box-shadow: 0 20px 50px rgba(0,0,0,0.6); position: relative; }
+        .ficha-header { display: flex; flex-direction: column; border-bottom: 2px solid var(--card-border); padding-bottom: 25px; margin-bottom: 30px; }
+        .brand-logo-header { height: 35px; margin-bottom: 20px; object-fit: contain; align-self: flex-start; }
+        .ficha-titulo-container { border-left: 4px solid var(--accent-color); padding-left: 20px; background: linear-gradient(90deg, rgba(0, 174, 239, 0.08) 0%, transparent 100%); }
+        .ficha-titulo-principal { font-size: 1.7rem; color: white; text-transform: uppercase; font-weight: 800; margin: 0; line-height: 1.2; }
+        .ficha-titulo-detalles { display: block; font-size: 0.9rem; color: #94a3b8; margin-top: 10px; font-weight: 400; text-transform: none; }
+        
+        .subtitulo-seccion { font-size: 1rem; font-weight: 800; color: var(--accent-color); text-transform: uppercase; border-bottom: 1px solid var(--card-border); padding-bottom: 8px; margin: 25px 0 15px 0; display: flex; align-items: center; gap: 10px; }
+        .galeria-fotos { display: flex; gap: 20px; justify-content: center; margin-bottom: 20px; }
+        .foto-marco { border: 1px solid var(--card-border); border-radius: 15px; padding: 15px; width: 45%; background-color: #fff; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        .foto-marco img { max-height: 220px; width: auto; border-radius: 8px; object-fit: contain; }
+
+        .info-basica-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .caja-info { background-color: var(--info-box-bg); padding: 15px; border-radius: 10px; border: 1px solid rgba(0, 174, 239, 0.1); }
+        .caja-info span { display: block; font-size: 0.75rem; color: #64748b; margin-bottom: 4px; }
+        .caja-info strong { font-size: 1rem; text-transform: uppercase; color: #f8fafc; }
+
+        .caracteristicas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 30px; }
+        .item-check { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: #cbd5e1; }
+        .item-check i { color: var(--accent-color); font-size: 1.1rem; }
+
+        .leyenda-ficha { text-align: right; margin-top: 25px; font-style: italic; color: #64748b; font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; }
+
+        .cotizar-wrapper { display: flex; justify-content: center; width: 100%; margin: 30px 0 10px 0; }
+        .btn-cotizar-premium { display: inline-flex; align-items: center; justify-content: center; gap: 12px; background: linear-gradient(135deg, var(--accent-color), #0ea5e9); color: white; text-decoration: none; font-weight: 800; padding: 16px 45px; border-radius: 14px; text-transform: uppercase; font-size: 1rem; transition: 0.3s; box-shadow: 0 4px 15px rgba(0, 174, 239, 0.3); border: none; cursor: pointer; }
+        .btn-cotizar-premium:hover { transform: translateY(-4px); background: #ffffff; color: #003366; }
+
+        .nav-btn { background: var(--accent-color); color: white; border: none; width: 55px; height: 55px; border-radius: 50%; cursor: pointer; font-size: 1.3rem; transition: 0.3s; z-index: 10; }
+
+        /* MARCAS AUTORIZADAS */
+        .brands-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 20px; max-width: 1100px; margin: 40px auto; padding: 0 20px; }
+        .brand-logo-card { background: white; padding: 20px; border-radius: 12px; height: 100px; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .brand-logo-card img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+        @media (max-width: 992px) {
+            header { padding: 10px 4%; flex-direction: column; }
+            nav ul { margin-top: 15px; gap: 15px; }
+            .caracteristicas-grid, .info-basica-grid { grid-template-columns: 1fr; }
+            .galeria-fotos { flex-direction: column; align-items: center; }
+            .foto-marco { width: 90%; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="/" class="logo-link">
+            <img src="/img/logo.png" alt="SVO Logo" class="logo-img">
+            <div class="logo-text">SISTEMAS DE<br>VIDEOVIGILANCIA<br>ORIZABA</div>
+        </a>
+        <nav>
+            <ul>
+                <li><a href="/">INICIO</a></li>
+                <li><a href="/#servicios">SERVICIOS</a></li>
+                <li><a href="/catalogo" class="active">CATÁLOGO</a></li>
+                <li><a href="/#nosotros">NOSOTROS</a></li>
+                <li><a href="/cotizar">COTIZAR</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="contact-menu">
+        <a href="https://wa.me/522721569109" class="main-contact" target="_blank"><i class="fab fa-whatsapp"></i></a>
+        <a href="mailto:svo.ventas01@gmail.com" class="extra-contact btn-mail" data-label="Correo Electrónico"><i class="fas fa-envelope"></i></a>
+        <a href="https://www.facebook.com/SistemasDeVideovigilanciaOrizaba" class="extra-contact btn-fb" target="_blank" data-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+    </div>
+
+    <main style="padding-top: 140px;">
+        <h1 style="text-align: center; font-size: 2.8rem; margin-bottom: 40px;">Catálogo de <span style="color: var(--accent-color);">Fichas Técnicas</span></h1>
+        
+        <div class="slider-wrapper">
+            <button class="nav-btn" id="prevBtn"><i class="fas fa-chevron-left"></i></button>
+            <div id="slider-content" style="width: 100%;">
+                
+                <% if (productos && productos.length > 0) { %>
+                    <% productos.forEach((prod, index) => { %>
+                        <div class="product-slide <%= index === 0 ? 'active' : '' %>">
+                            <div class="ficha-tecnica">
+                                <div class="ficha-header">
+                                    <img src="/img/<%= prod.marca.toLowerCase() %>2.png" alt="<%= prod.marca %>" class="brand-logo-header" onerror="this.src='/img/logo.png'">
+                                    <div class="ficha-titulo-container">
+                                        <h2 class="ficha-titulo-principal"><%= prod.titulo %></h2>
+                                        <span class="ficha-titulo-detalles"><%= prod.subtitulo %></span>
+                                    </div>
+                                </div>
+                                
+                                <div class="subtitulo-seccion"><i class="fas fa-camera"></i> Galería de Componentes</div>
+                                <div class="galeria-fotos">
+                                    <div class="foto-marco"><img src="/img/<%= prod.imagen1 %>" alt="Vista Principal"></div>
+                                    <div class="foto-marco"><img src="/img/<%= prod.imagen2 %>" alt="Vista Detalle"></div>
+                                </div>
+
+                                <div class="subtitulo-seccion"><i class="fas fa-info-circle"></i> Información del Modelo</div>
+                                <div class="info-basica-grid">
+                                    <div class="caja-info"><span>Marca Registrada</span><strong><%= prod.marca %></strong></div>
+                                    <div class="caja-info"><span>Modelo de Serie</span><strong><%= prod.modelo %></strong></div>
+                                </div>
+
+                                <div class="subtitulo-seccion"><i class="fas fa-list-ul"></i> Características Principales</div>
+                                <div class="caracteristicas-grid">
+                                    <% prod.caracteristicas.split('\n').forEach(linea => { %>
+                                        <% if(linea.trim()) { %>
+                                            <div class="item-check"><i class="fas fa-check-circle"></i> <%= linea %></div>
+                                        <% } %>
+                                    <% }) %>
+                                </div>
+
+                                <div class="leyenda-ficha">Diseño profesional garantizado por SVO</div>
+
+                                <div class="cotizar-wrapper">
+                                    <a href="https://wa.me/522721569109?text=Hola,%20me%20interesa%20la%20ficha:%20<%= prod.titulo %>" target="_blank" class="btn-cotizar-premium">
+                                        <i class="fas fa-file-invoice-dollar"></i> Cotizar este Kit
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <div style="text-align: center; padding: 100px 20px;">
+                        <i class="fas fa-box-open" style="font-size: 4rem; color: #334155; margin-bottom: 20px;"></i>
+                        <h2 style="color: #64748b;">No hay productos disponibles en este momento</h2>
+                    </div>
+                <% } %>
+
+            </div>
+            <button class="nav-btn" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+
+        <section style="text-align: center; padding: 60px 0;">
+            <h2 style="margin-bottom: 40px;">Marcas <span style="color: var(--accent-color);">Autorizadas</span></h2>
+            <div class="brands-grid">
+                <div class="brand-logo-card"><img src="/img/hikvision2.png"></div>
+                <div class="brand-logo-card"><img src="/img/Dahua2.png"></div>
+                <div class="brand-logo-card"><img src="/img/HiLook2.jpg"></div>
+                <div class="brand-logo-card"><img src="/img/Ezviz2.png"></div>
+                <div class="brand-logo-card"><img src="/img/uniview2.png"></div>
+                <div class="brand-logo-card"><img src="/img/IMOU2.png"></div>
+                <div class="brand-logo-card"><img src="/img/tplink2.jpg"></div>
+                <div class="brand-logo-card"><img src="/img/Honeywell2.png"></div>
+                <div class="brand-logo-card"><img src="/img/zkteco2.png"></div>
+                <div class="brand-logo-card"><img src="/img/logitech2.png"></div>
+                <div class="brand-logo-card"><img src="/img/axis2.jpg"></div>
+                <div class="brand-logo-card"><img src="/img/Bosch2.png"></div>
+                <div class="brand-logo-card"><img src="/img/epcom2.png"></div>
+            </div>
+            <p style="color: #64748b; font-style: italic; margin-top: 20px;">Y muchas marcas más para cada necesidad...</p>
+        </section>
+    </main>
+
+    <script>
+        const slides = document.querySelectorAll('.product-slide');
+        let currentIdx = 0;
+        
+        function showSlide(i) {
+            if (slides.length === 0) return;
+            slides[currentIdx].classList.remove('active');
+            currentIdx = (i + slides.length) % slides.length;
+            slides[currentIdx].classList.add('active');
+        }
+
+        if (slides.length > 0) {
+            document.getElementById('nextBtn').onclick = () => showSlide(currentIdx + 1);
+            document.getElementById('prevBtn').onclick = () => showSlide(currentIdx - 1);
+        } else {
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('prevBtn').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
