@@ -1,7 +1,7 @@
 const express = require('express');
 const mysql = require('mysql2');
 const path = require('path');
-const require('dotenv').config(); // Carga las variables del archivo .env
+require('dotenv').config(); // Carga las variables del archivo .env
 
 // --- IMPORTACIÓN DE CLOUDINARY ---
 const upload = require('./config/cloudinary'); 
@@ -48,17 +48,18 @@ app.get('/catalogo', (req, res) => {
     });
 });
 
-// Panel de Admin
-app.get('/admin', (req, res) => res.render('admin'));
+// Panel de Admin (Actualizado para mostrar la lista y poder editar/borrar)
+app.get('/admin', (req, res) => {
+    db.query('SELECT * FROM productos', (err, rows) => {
+        if (err) return res.send("Error al cargar productos");
+        res.render('admin', { productos: rows });
+    });
+});
 
-// RUTA ACTUALIZADA PARA CLOUDINARY (Sube 2 fotos a la nube)
+// RUTA PARA SUBIR (CREATE)
 app.post('/admin/subir', upload.fields([{ name: 'imagen1' }, { name: 'imagen2' }]), (req, res) => {
-    
     if (!req.body) return res.status(400).send("No se recibieron datos.");
-
     const { marca, titulo, subtitulo, modelo, caracteristicas } = req.body;
-    
-    // Ahora obtenemos la URL de Cloudinary (path) en lugar del nombre de archivo local
     const img1 = req.files['imagen1'] ? req.files['imagen1'][0].path : null;
     const img2 = req.files['imagen2'] ? req.files['imagen2'][0].path : null;
 
@@ -71,8 +72,44 @@ app.post('/admin/subir', upload.fields([{ name: 'imagen1' }, { name: 'imagen2' }
             console.error('❌ Error al insertar:', err.message);
             return res.status(500).send("Error al guardar en la base de datos.");
         }
-        console.log('🚀 Producto publicado con éxito en Cloudinary y Aiven');
         res.redirect('/catalogo');
+    });
+});
+
+// --- NUEVA RUTA: ELIMINAR (DELETE) ---
+app.get('/admin/eliminar/:id', (req, res) => {
+    const { id } = req.params;
+    db.query('DELETE FROM productos WHERE id = ?', [id], (err, result) => {
+        if (err) return res.status(500).send("Error al eliminar");
+        res.redirect('/admin');
+    });
+});
+
+// --- NUEVA RUTA: FORMULARIO EDITAR (Pide los datos actuales) ---
+app.get('/admin/editar/:id', (req, res) => {
+    const { id } = req.params;
+    db.query('SELECT * FROM productos WHERE id = ?', [id], (err, rows) => {
+        if (err || rows.length === 0) return res.status(404).send("Producto no encontrado");
+        res.render('editar', { producto: rows[0] });
+    });
+});
+
+// --- NUEVA RUTA: ACTUALIZAR (UPDATE) ---
+app.post('/admin/actualizar/:id', upload.fields([{ name: 'imagen1' }, { name: 'imagen2' }]), (req, res) => {
+    const { id } = req.params;
+    const { marca, titulo, subtitulo, modelo, caracteristicas } = req.body;
+    
+    // Si no se suben fotos nuevas, se quedan las que ya estaban (old_img)
+    const img1 = req.files['imagen1'] ? req.files['imagen1'][0].path : req.body.old_img1;
+    const img2 = req.files['imagen2'] ? req.files['imagen2'][0].path : req.body.old_img2;
+
+    const query = `UPDATE productos SET 
+                   marca=?, titulo=?, subtitulo=?, modelo=?, caracteristicas=?, imagen1=?, imagen2=? 
+                   WHERE id=?`;
+    
+    db.query(query, [marca, titulo, subtitulo, modelo, caracteristicas, img1, img2, id], (err, result) => {
+        if (err) return res.status(500).send("Error al actualizar");
+        res.redirect('/admin');
     });
 });
 

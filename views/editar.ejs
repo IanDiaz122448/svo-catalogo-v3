@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVO - Editar Producto</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --accent-color: #38bdf8;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+        }
+
+        body { 
+            background: var(--bg-dark); 
+            color: white; 
+            font-family: 'Segoe UI', sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px; 
+        }
+
+        .form-card { 
+            background: var(--card-bg); 
+            padding: 40px; 
+            border-radius: 20px; 
+            width: 100%; 
+            max-width: 600px; 
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+
+        h2 { 
+            text-align: center; 
+            color: var(--accent-color); 
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-group { margin-bottom: 20px; }
+        
+        label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-size: 0.85rem; 
+            color: #94a3b8; 
+            font-weight: 600;
+        }
+
+        input, textarea, select { 
+            width: 100%; 
+            padding: 12px 15px; 
+            background: #0f172a; 
+            border: 1px solid #334155; 
+            color: white; 
+            border-radius: 10px; 
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--accent-color);
+            outline: none;
+            box-shadow: 0 0 8px rgba(56, 189, 248, 0.2);
+        }
+
+        .file-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn-update { 
+            background: linear-gradient(135deg, #f59e0b, #d97706); 
+            color: white; 
+            border: none; 
+            padding: 18px; 
+            width: 100%; 
+            border-radius: 12px; 
+            font-weight: 800; 
+            cursor: pointer; 
+            text-transform: uppercase;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+
+        .btn-update:hover { 
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-cancel {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .hint { font-size: 0.75rem; color: #64748b; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <div class="form-card">
+        <h2><i class="fas fa-edit"></i> Editar Producto</h2>
+        
+        <form action="/admin/actualizar/<%= producto.id %>" method="POST" enctype="multipart/form-data">
+            
+            <div class="input-group">
+                <label>Marca Actual: <%= producto.marca %></label>
+                <select name="marca">
+                    <option value="Hikvision" <%= producto.marca === 'Hikvision' ? 'selected' : '' %>>Hikvision</option>
+                    <option value="HiLook" <%= producto.marca === 'HiLook' ? 'selected' : '' %>>HiLook</option>
+                    <option value="Dahua" <%= producto.marca === 'Dahua' ? 'selected' : '' %>>Dahua</option>
+                    <option value="Ezviz" <%= producto.marca === 'Ezviz' ? 'selected' : '' %>>Ezviz</option>
+                    <option value="Imou" <%= producto.marca === 'Imou' ? 'selected' : '' %>>Imou</option>
+                    <option value="Uniview" <%= producto.marca === 'Uniview' ? 'selected' : '' %>>Uniview</option>
+                    <option value="Honeywell" <%= producto.marca === 'Honeywell' ? 'selected' : '' %>>Honeywell</option>
+                    <option value="ZKTeco" <%= producto.marca === 'ZKTeco' ? 'selected' : '' %>>ZKTeco</option>
+                    <option value="Logitech" <%= producto.marca === 'Logitech' ? 'selected' : '' %>>Logitech</option>
+                    <option value="Axis" <%= producto.marca === 'Axis' ? 'selected' : '' %>>Axis</option>
+                    <option value="Bosch" <%= producto.marca === 'Bosch' ? 'selected' : '' %>>Bosch</option>
+                    <option value="Epcom" <%= producto.marca === 'Epcom' ? 'selected' : '' %>>Epcom</option>
+                    <option value="TPlink" <%= producto.marca === 'TPlink' ? 'selected' : '' %>>TPlink</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Título del Kit / Producto</label>
+                <input type="text" name="titulo" value="<%= producto.titulo %>" required>
+            </div>
+
+            <div class="input-group">
+                <label>Detalles Rápidos</label>
+                <input type="text" name="subtitulo" value="<%= producto.subtitulo %>" required>
+            </div>
+
+            <div class="input-group">
+                <label>Modelo de Serie</label>
+                <input type="text" name="modelo" value="<%= producto.modelo %>" required>
+            </div>
+
+            <div class="input-group">
+                <label>Características (Una por cada línea)</label>
+                <textarea name="caracteristicas" rows="5" required><%= producto.caracteristicas %></textarea>
+            </div>
+
+            <input type="hidden" name="old_img1" value="<%= producto.imagen1 %>">
+            <input type="hidden" name="old_img2" value="<%= producto.imagen2 %>">
+
+            <div class="file-grid">
+                <div class="input-group">
+                    <label>Cambiar Imagen 1 (Opcional)</label>
+                    <input type="file" name="imagen1" accept="image/*">
+                </div>
+                <div class="input-group">
+                    <label>Cambiar Imagen 2 (Opcional)</label>
+                    <input type="file" name="imagen2" accept="image/*">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-update"><i class="fas fa-save"></i> GUARDAR CAMBIOS</button>
+            <a href="/admin" class="btn-cancel">Cancelar y volver</a>
+        </form>
+    </div>
+</body>
+</html>

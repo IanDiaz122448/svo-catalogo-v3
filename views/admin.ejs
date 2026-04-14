@@ -10,6 +10,8 @@
             --accent-color: #38bdf8;
             --bg-dark: #0f172a;
             --card-bg: #1e293b;
+            --danger: #ef4444;
+            --warning: #f59e0b;
         }
 
         body { 
@@ -17,21 +19,22 @@
             color: white; 
             font-family: 'Segoe UI', sans-serif; 
             display: flex; 
-            justify-content: center; 
+            flex-direction: column;
             align-items: center;
             min-height: 100vh;
             margin: 0;
             padding: 20px; 
         }
 
-        .form-card { 
+        .form-card, .table-card { 
             background: var(--card-bg); 
             padding: 40px; 
             border-radius: 20px; 
             width: 100%; 
-            max-width: 600px; 
+            max-width: 800px; 
             border: 1px solid rgba(56, 189, 248, 0.2);
             box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            margin-bottom: 30px;
         }
 
         h2 { 
@@ -75,7 +78,7 @@
             gap: 15px;
         }
 
-        button { 
+        .btn-submit { 
             background: linear-gradient(135deg, #00aeef, #0ea5e9); 
             color: white; 
             border: none; 
@@ -89,11 +92,24 @@
             transition: 0.3s;
         }
 
-        button:hover { 
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 174, 239, 0.4);
-            filter: brightness(1.1);
+        /* Estilos de la Tabla */
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { text-align: left; color: var(--accent-color); padding: 12px; border-bottom: 2px solid #334155; }
+        td { padding: 12px; border-bottom: 1px solid #334155; font-size: 0.9rem; }
+        
+        .actions { display: flex; gap: 10px; }
+        .btn-action {
+            padding: 8px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
+            transition: 0.2s;
         }
+        .btn-edit { background: var(--warning); }
+        .btn-delete { background: var(--danger); }
+        .btn-action:hover { opacity: 0.8; transform: scale(1.05); }
 
         .hint { font-size: 0.75rem; color: #64748b; margin-top: 5px; }
     </style>
@@ -103,7 +119,6 @@
         <h2><i class="fas fa-plus-circle"></i> Nuevo Producto SVO</h2>
         
         <form action="/admin/subir" method="POST" enctype="multipart/form-data">
-            
             <div class="input-group">
                 <label>Seleccionar Marca</label>
                 <select name="marca" required>
@@ -146,17 +161,50 @@
 
             <div class="file-grid">
                 <div class="input-group">
-                    <label>Imagen Principal (Caja/Kit)</label>
+                    <label>Imagen Principal</label>
                     <input type="file" name="imagen1" accept="image/*" required>
                 </div>
                 <div class="input-group">
-                    <label>Imagen Detalle (Cámaras)</label>
+                    <label>Imagen Detalle</label>
                     <input type="file" name="imagen2" accept="image/*" required>
                 </div>
             </div>
 
-            <button type="submit"><i class="fas fa-cloud-upload-alt"></i> PUBLICAR EN CATÁLOGO</button>
+            <button type="submit" class="btn-submit"><i class="fas fa-cloud-upload-alt"></i> PUBLICAR EN CATÁLOGO</button>
         </form>
+    </div>
+
+    <div class="table-card">
+        <h2><i class="fas fa-tasks"></i> Gestionar Catálogo</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Modelo</th>
+                    <th>Título</th>
+                    <th>Marca</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% productos.forEach(producto => { %>
+                    <tr>
+                        <td><%= producto.modelo %></td>
+                        <td><%= producto.titulo %></td>
+                        <td><%= producto.marca %></td>
+                        <td class="actions">
+                            <a href="/admin/editar/<%= producto.id %>" class="btn-action btn-edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="/admin/eliminar/<%= producto.id %>" 
+                               class="btn-action btn-delete" 
+                               onclick="return confirm('¿Seguro que quieres eliminar este producto?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
     </div>
 </body>
 </html>
