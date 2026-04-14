@@ -1,19 +1,12 @@
 const express = require('express');
 const mysql = require('mysql2');
 const path = require('path');
-const multer = require('multer'); 
-require('dotenv').config(); // Carga las variables del archivo .env
+const require('dotenv').config(); // Carga las variables del archivo .env
+
+// --- IMPORTACIÓN DE CLOUDINARY ---
+const upload = require('./config/cloudinary'); 
 
 const app = express();
-
-// --- 1. CONFIGURACIÓN DE ALMACENAMIENTO DE IMÁGENES ---
-const storage = multer.diskStorage({
-    destination: path.join(__dirname, 'public/img'),
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
-    }
-});
-const upload = multer({ storage });
 
 // --- 2. CONFIGURACIÓN DEL SERVIDOR ---
 app.set('view engine', 'ejs');
@@ -29,7 +22,8 @@ const db = mysql.createConnection({
     user: process.env.DB_USER || 'root',      
     password: process.env.DB_PASSWORD || '122448', 
     database: process.env.DB_NAME || 'svo_catalogo',
-    port: process.env.DB_PORT || 3306
+    port: process.env.DB_PORT || 3306,
+    ssl: { rejectUnauthorized: false } // Añadido para asegurar conexión con Aiven
 });
 
 db.connect((err) => {
@@ -57,16 +51,16 @@ app.get('/catalogo', (req, res) => {
 // Panel de Admin
 app.get('/admin', (req, res) => res.render('admin'));
 
-// RUTA PARA RECIBIR EL FORMULARIO Y LAS 2 FOTOS
+// RUTA ACTUALIZADA PARA CLOUDINARY (Sube 2 fotos a la nube)
 app.post('/admin/subir', upload.fields([{ name: 'imagen1' }, { name: 'imagen2' }]), (req, res) => {
     
-    // Validación de seguridad para evitar errores de destructuring
     if (!req.body) return res.status(400).send("No se recibieron datos.");
 
     const { marca, titulo, subtitulo, modelo, caracteristicas } = req.body;
     
-    const img1 = req.files['imagen1'] ? req.files['imagen1'][0].filename : null;
-    const img2 = req.files['imagen2'] ? req.files['imagen2'][0].filename : null;
+    // Ahora obtenemos la URL de Cloudinary (path) en lugar del nombre de archivo local
+    const img1 = req.files['imagen1'] ? req.files['imagen1'][0].path : null;
+    const img2 = req.files['imagen2'] ? req.files['imagen2'][0].path : null;
 
     const query = `INSERT INTO productos 
                    (marca, titulo, subtitulo, modelo, caracteristicas, imagen1, imagen2) 
@@ -77,7 +71,7 @@ app.post('/admin/subir', upload.fields([{ name: 'imagen1' }, { name: 'imagen2' }
             console.error('❌ Error al insertar:', err.message);
             return res.status(500).send("Error al guardar en la base de datos.");
         }
-        console.log('🚀 Producto publicado con éxito');
+        console.log('🚀 Producto publicado con éxito en Cloudinary y Aiven');
         res.redirect('/catalogo');
     });
 });
