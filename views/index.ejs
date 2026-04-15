@@ -18,7 +18,7 @@
             --mail-color: #ea4335;
         }
 
-        /* --- ESTILOS ACTUALIZADOS: TAMAÑO FIJO Y AJUSTE --- */
+        /* --- ESTILOS ACTUALIZADOS: LLENADO TOTAL SIN BORDES NEGROS --- */
         .promo-section {
             padding: 30px 5%;
             background: var(--bg-dark);
@@ -34,14 +34,14 @@
             overflow: hidden;
             border: 1px solid rgba(56, 189, 248, 0.2);
             box-shadow: 0 15px 30px rgba(0,0,0,0.4);
-            background: #000;   /* Fondo negro para relleno */
+            background: transparent; /* Quitamos el fondo negro */
         }
 
         .swiper-slide img {
             width: 100%;
-            height: 100%;      /* Llena el contenedor de 400px */
+            height: 100%;
             display: block;
-            object-fit: contain; /* Ajusta la imagen completa sin recortarla */
+            object-fit: cover; /* La imagen ahora llena todo el espacio disponible */
         }
 
         @media (max-width: 768px) {
@@ -400,7 +400,7 @@
     <script>
         const swiper = new Swiper('.swiper', {
             loop: true,
-            autoHeight: false, // Desactivado para respetar la altura fija de 400px
+            autoHeight: false, 
             autoplay: {
                 delay: 4000,
                 disableOnInteraction: false,
