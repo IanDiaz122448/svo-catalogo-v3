@@ -115,6 +115,7 @@
     </style>
 </head>
 <body>
+
     <div class="form-card">
         <h2><i class="fas fa-plus-circle"></i> Nuevo Producto SVO</h2>
         
@@ -198,7 +199,7 @@
                             <a href="/admin/eliminar/<%= producto.id %>" 
                                class="btn-action btn-delete" 
                                onclick="return confirm('¿Seguro que quieres eliminar este producto?')">
-                                <i class="fas fa-trash"></i>
+                                 <i class="fas fa-trash"></i>
                             </a>
                         </td>
                     </tr>
@@ -206,5 +207,60 @@
             </tbody>
         </table>
     </div>
+
+    <div class="form-card">
+        <h2><i class="fas fa-ad"></i> Nueva Promoción (Canva)</h2>
+        <form action="/admin/promocion" method="POST" enctype="multipart/form-data">
+            <div class="input-group">
+                <label>Título de la Promo</label>
+                <input type="text" name="titulo" placeholder="Ej: Especial Buen Fin" required>
+            </div>
+            <div class="input-group">
+                <label>Link de WhatsApp (Opcional)</label>
+                <input type="text" name="link" placeholder="https://wa.me/...">
+            </div>
+            <div class="input-group">
+                <label>Diseño de Canva (Banner)</label>
+                <input type="file" name="banner" accept="image/*" required>
+                <div class="hint">Se recomienda formato horizontal (1200x400px aprox).</div>
+            </div>
+            <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, #22c55e, #16a34a);">
+                <i class="fas fa-check-circle"></i> SUBIR BANNER DE PROMO
+            </button>
+        </form>
+    </div>
+
+    <div class="table-card">
+        <h2><i class="fas fa-images"></i> Gestionar Banners</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Título Promo</th>
+                    <th>Vista Previa</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% promociones.forEach(promo => { %>
+                    <tr>
+                        <td><%= promo.id %></td>
+                        <td><%= promo.titulo %></td>
+                        <td>
+                            <img src="<%= promo.imagen_url %>" style="height: 40px; border-radius: 4px; border: 1px solid #334155;">
+                        </td>
+                        <td class="actions">
+                            <a href="/admin/eliminar-promocion/<%= promo.id %>" 
+                               class="btn-action btn-delete" 
+                               onclick="return confirm('¿Eliminar este banner de promoción?')">
+                                 <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+
 </body>
 </html>

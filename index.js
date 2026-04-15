@@ -1,7 +1,7 @@
 const express = require('express');
 const mysql = require('mysql2');
 const path = require('path');
-require('dotenv').config(); // Carga las variables del archivo .env
+require('dotenv').config(); 
 
 // --- IMPORTACIÓN DE CLOUDINARY ---
 const upload = require('./config/cloudinary'); 
@@ -16,14 +16,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// --- 3. CONEXIÓN A LA BASE DE DATOS (Dinámica) ---
+// --- 3. CONEXIÓN A LA BASE DE DATOS ---
 const db = mysql.createConnection({
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',      
     password: process.env.DB_PASSWORD || '122448', 
     database: process.env.DB_NAME || 'svo_catalogo',
     port: process.env.DB_PORT || 3306,
-    ssl: { rejectUnauthorized: false } // Añadido para asegurar conexión con Aiven
+    ssl: { rejectUnauthorized: false }
 });
 
 db.connect((err) => {
@@ -33,11 +33,20 @@ db.connect((err) => {
 
 // --- 4. RUTAS ---
 
-// Inicio y Cotizar
-app.get('/', (req, res) => res.render('index'));
+// Inicio (Ahora carga los banners de promociones)
+app.get('/', (req, res) => {
+    db.query('SELECT * FROM promociones ORDER BY fecha_creacion DESC', (err, rows) => {
+        if (err) {
+            console.error('❌ Error al cargar promociones:', err.message);
+            return res.render('index', { banners: [] });
+        }
+        res.render('index', { banners: rows });
+    });
+});
+
 app.get('/cotizar', (req, res) => res.render('cotizar'));
 
-// Catálogo (Muestra los productos)
+// Catálogo
 app.get('/catalogo', (req, res) => {
     db.query('SELECT * FROM productos', (err, rows) => {
         if (err) {
@@ -48,15 +57,20 @@ app.get('/catalogo', (req, res) => {
     });
 });
 
-// Panel de Admin (Actualizado para mostrar la lista y poder editar/borrar)
+// Panel de Admin (Muestra productos y promociones)
 app.get('/admin', (req, res) => {
-    db.query('SELECT * FROM productos', (err, rows) => {
+    db.query('SELECT * FROM productos', (err, productos) => {
         if (err) return res.send("Error al cargar productos");
-        res.render('admin', { productos: rows });
+        
+        db.query('SELECT * FROM promociones', (err, promociones) => {
+            if (err) return res.send("Error al cargar promociones");
+            res.render('admin', { productos: productos, promociones: promociones });
+        });
     });
 });
 
-// RUTA PARA SUBIR (CREATE)
+// --- SECCIÓN DE PRODUCTOS ---
+
 app.post('/admin/subir', upload.fields([{ name: 'imagen1' }, { name: 'imagen2' }]), (req, res) => {
     if (!req.body) return res.status(400).send("No se recibieron datos.");
     const { marca, titulo, subtitulo, modelo, caracteristicas } = req.body;
@@ -76,7 +90,6 @@ app.post('/admin/subir', upload.fields([{ name: 'imagen1' }, { name: 'imagen2' }
     });
 });
 
-// --- NUEVA RUTA: ELIMINAR (DELETE) ---
 app.get('/admin/eliminar/:id', (req, res) => {
     const { id } = req.params;
     db.query('DELETE FROM productos WHERE id = ?', [id], (err, result) => {
@@ -85,7 +98,6 @@ app.get('/admin/eliminar/:id', (req, res) => {
     });
 });
 
-// --- NUEVA RUTA: FORMULARIO EDITAR (Pide los datos actuales) ---
 app.get('/admin/editar/:id', (req, res) => {
     const { id } = req.params;
     db.query('SELECT * FROM productos WHERE id = ?', [id], (err, rows) => {
@@ -94,12 +106,10 @@ app.get('/admin/editar/:id', (req, res) => {
     });
 });
 
-// --- NUEVA RUTA: ACTUALIZAR (UPDATE) ---
 app.post('/admin/actualizar/:id', upload.fields([{ name: 'imagen1' }, { name: 'imagen2' }]), (req, res) => {
     const { id } = req.params;
     const { marca, titulo, subtitulo, modelo, caracteristicas } = req.body;
     
-    // Si no se suben fotos nuevas, se quedan las que ya estaban (old_img)
     const img1 = req.files['imagen1'] ? req.files['imagen1'][0].path : req.body.old_img1;
     const img2 = req.files['imagen2'] ? req.files['imagen2'][0].path : req.body.old_img2;
 
@@ -109,6 +119,34 @@ app.post('/admin/actualizar/:id', upload.fields([{ name: 'imagen1' }, { name: 'i
     
     db.query(query, [marca, titulo, subtitulo, modelo, caracteristicas, img1, img2, id], (err, result) => {
         if (err) return res.status(500).send("Error al actualizar");
+        res.redirect('/admin');
+    });
+});
+
+// --- NUEVA SECCIÓN: PROMOCIONES ---
+
+// Subir banner de promoción
+app.post('/admin/promocion', upload.single('banner'), (req, res) => {
+    const { titulo, link } = req.body;
+    const imagen_url = req.file ? req.file.path : null;
+
+    if (!imagen_url) return res.status(400).send("Debe subir una imagen para la promoción.");
+
+    const query = 'INSERT INTO promociones (titulo, imagen_url, enlace_whatsapp) VALUES (?, ?, ?)';
+    db.query(query, [titulo, imagen_url, link], (err, result) => {
+        if (err) {
+            console.error('❌ Error al guardar promo:', err.message);
+            return res.status(500).send("Error en la base de datos.");
+        }
+        res.redirect('/admin');
+    });
+});
+
+// Eliminar banner de promoción
+app.get('/admin/eliminar-promocion/:id', (req, res) => {
+    const { id } = req.params;
+    db.query('DELETE FROM promociones WHERE id = ?', [id], (err, result) => {
+        if (err) return res.status(500).send("Error al eliminar promoción");
         res.redirect('/admin');
     });
 });
