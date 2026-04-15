@@ -18,16 +18,18 @@
             --mail-color: #ea4335;
         }
 
-        /* --- ESTILOS ACTUALIZADOS: PANEL DE PROMOS MÁS CHICO --- */
+        /* --- ESTILOS ACTUALIZADOS: AJUSTE PROPORCIONAL --- */
         .promo-section {
-            padding: 20px 5%; /* Menos padding para reducir espacio */
+            padding: 20px 5%;
             background: var(--bg-dark);
+            display: flex;
+            justify-content: center;
         }
 
         .swiper {
             width: 100%;
-            max-width: 1000px; /* Un poco más estrecho */
-            height: 300px;    /* ALTURA LIMITADA para que no se vea gigante */
+            max-width: 1100px;
+            height: auto; /* Permite que la altura crezca según la imagen */
             border-radius: 15px;
             overflow: hidden;
             border: 1px solid rgba(56, 189, 248, 0.2);
@@ -36,14 +38,14 @@
 
         .swiper-slide img {
             width: 100%;
-            height: 100%;     /* Obliga a la imagen a llenar la altura del swiper */
+            height: auto;      /* No fuerza la altura, respeta la proporción */
             display: block;
-            object-fit: cover; /* Recorta la imagen para que no se deforme */
+            object-fit: contain; /* Asegura que se vea todo el diseño de Canva */
         }
 
         @media (max-width: 768px) {
             .swiper {
-                height: 180px; /* Aún más chico en celulares */
+                max-width: 100%;
             }
         }
 
@@ -397,6 +399,7 @@
     <script>
         const swiper = new Swiper('.swiper', {
             loop: true,
+            autoHeight: true, // Ajusta la altura del contenedor a la imagen actual
             autoplay: {
                 delay: 4000,
                 disableOnInteraction: false,
