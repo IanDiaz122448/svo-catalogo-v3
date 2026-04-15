@@ -18,26 +18,33 @@
             --mail-color: #ea4335;
         }
 
-        /* --- ESTILOS NUEVOS: PANEL DE PROMOS --- */
+        /* --- ESTILOS ACTUALIZADOS: PANEL DE PROMOS MÁS CHICO --- */
         .promo-section {
-            padding: 40px 5%;
+            padding: 20px 5%; /* Menos padding para reducir espacio */
             background: var(--bg-dark);
         }
 
         .swiper {
             width: 100%;
-            max-width: 1200px;
-            border-radius: 20px;
+            max-width: 1000px; /* Un poco más estrecho */
+            height: 300px;    /* ALTURA LIMITADA para que no se vea gigante */
+            border-radius: 15px;
             overflow: hidden;
             border: 1px solid rgba(56, 189, 248, 0.2);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4);
         }
 
         .swiper-slide img {
             width: 100%;
-            height: auto;
+            height: 100%;     /* Obliga a la imagen a llenar la altura del swiper */
             display: block;
-            object-fit: cover;
+            object-fit: cover; /* Recorta la imagen para que no se deforme */
+        }
+
+        @media (max-width: 768px) {
+            .swiper {
+                height: 180px; /* Aún más chico en celulares */
+            }
         }
 
         /* --- SECCIÓN SERVICIOS --- */
