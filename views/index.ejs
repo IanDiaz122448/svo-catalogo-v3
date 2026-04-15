@@ -20,10 +20,11 @@
 
         /* --- ESTILOS OPTIMIZADOS: PANEL DE PROMOS ADAPTATIVO --- */
         .promo-section {
-            padding: 20px 5%;
+            padding: 0; /* Ajustado para mejor integración en el Hero */
             background: transparent; 
             display: flex;
             justify-content: center;
+            width: 100%;
         }
 
         .swiper {
@@ -63,7 +64,8 @@
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            gap: 20px; /* Espacio entre panel y texto */
+            align-items: center; /* Asegura el centrado horizontal de los hijos */
+            gap: 30px; /* Espacio entre panel y texto */
         }
 
         /* --- SECCIÓN SERVICIOS --- */
@@ -310,7 +312,7 @@
 
             <div style="text-align: center;">
                 <h1>Seguridad que <span>puedes ver</span></h1>
-                <p style="font-size: 1.2rem; color: #94a3b8; margin-bottom: 40px; max-width: 700px;">Expertos en venta, instalación y mantenimiento de cámaras en Orizaba y la región.</p>
+                <p style="font-size: 1.2rem; color: #94a3b8; margin-bottom: 40px; max-width: 700px; margin-left: auto; margin-right: auto;">Expertos en venta, instalación y mantenimiento de cámaras en Orizaba y la región.</p>
                 <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
                     <a href="/cotizar" class="btn">Cotizar Proyecto</a>
                     <a href="/catalogo" class="btn btn-outline">Ver Marcas</a>
@@ -420,7 +422,7 @@
     <script>
         const swiper = new Swiper('.swiper', {
             loop: true,
-            autoHeight: true, // Swiper se ajustará a la altura de cada imagen
+            autoHeight: true, 
             autoplay: {
                 delay: 4000,
                 disableOnInteraction: false,
