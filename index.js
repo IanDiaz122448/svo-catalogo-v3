@@ -8,6 +8,12 @@ const upload = require('./config/cloudinary');
 
 const app = express();
 
+// --- CONFIGURACIÓN DE SEGURIDAD GENERAL (CSP) ---
+app.use((req, res, next) => {
+    res.setHeader("Content-Security-Policy", "default-src * 'unsafe-inline' 'unsafe-eval'; img-src * data: blob:; connect-src *;");
+    next();
+});
+
 // --- 2. CONFIGURACIÓN DEL SERVIDOR ---
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -16,20 +22,23 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// --- 3. CONEXIÓN A LA BASE DE DATOS ---
-const db = mysql.createConnection({
+// --- 3. CONEXIÓN A LA BASE DE DATOS (MIGRADO A POOL PARA EVITAR CAÍDAS) ---
+const pool = mysql.createPool({
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',      
     password: process.env.DB_PASSWORD || '122448', 
     database: process.env.DB_NAME || 'svo_catalogo',
     port: process.env.DB_PORT || 3306,
-    ssl: { rejectUnauthorized: false }
+    ssl: { rejectUnauthorized: false },
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-db.connect((err) => {
-    if (err) console.error('❌ Error DB:', err.message);
-    else console.log('✅ Conexión establecida correctamente');
-});
+// Mantenemos la constante db apuntando al pool para que tus consultas funcionen igual
+const db = pool;
+
+console.log('✅ Pool de conexiones configurado correctamente para la DB');
 
 // --- 4. RUTAS ---
 
@@ -60,10 +69,10 @@ app.get('/catalogo', (req, res) => {
 // Panel de Admin (Muestra productos y promociones)
 app.get('/admin', (req, res) => {
     db.query('SELECT * FROM productos', (err, productos) => {
-        if (err) return res.send("Error al cargar productos");
+        if (err) return res.status(500).send("Error al cargar productos: " + err.message);
         
         db.query('SELECT * FROM promociones', (err, promociones) => {
-            if (err) return res.send("Error al cargar promociones");
+            if (err) return res.status(500).send("Error al cargar promociones: " + err.message);
             res.render('admin', { productos: productos, promociones: promociones });
         });
     });
@@ -78,13 +87,13 @@ app.post('/admin/subir', upload.fields([{ name: 'imagen1' }, { name: 'imagen2' }
     const img2 = req.files['imagen2'] ? req.files['imagen2'][0].path : null;
 
     const query = `INSERT INTO productos 
-                   (marca, titulo, subtitulo, modelo, caracteristicas, imagen1, imagen2) 
-                   VALUES (?, ?, ?, ?, ?, ?, ?)`;
+                    (marca, titulo, subtitulo, modelo, caracteristicas, imagen1, imagen2) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?)`;
     
     db.query(query, [marca, titulo, subtitulo, modelo, caracteristicas, img1, img2], (err, result) => {
         if (err) {
             console.error('❌ Error al insertar:', err.message);
-            return res.status(500).send("Error al guardar en la base de datos.");
+            return res.status(500).send("Error al guardar en la base de datos: " + err.message);
         }
         res.redirect('/catalogo');
     });
@@ -93,7 +102,7 @@ app.post('/admin/subir', upload.fields([{ name: 'imagen1' }, { name: 'imagen2' }
 app.get('/admin/eliminar/:id', (req, res) => {
     const { id } = req.params;
     db.query('DELETE FROM productos WHERE id = ?', [id], (err, result) => {
-        if (err) return res.status(500).send("Error al eliminar");
+        if (err) return res.status(500).send("Error al eliminar: " + err.message);
         res.redirect('/admin');
     });
 });
@@ -114,11 +123,11 @@ app.post('/admin/actualizar/:id', upload.fields([{ name: 'imagen1' }, { name: 'i
     const img2 = req.files['imagen2'] ? req.files['imagen2'][0].path : req.body.old_img2;
 
     const query = `UPDATE productos SET 
-                   marca=?, titulo=?, subtitulo=?, modelo=?, caracteristicas=?, imagen1=?, imagen2=? 
-                   WHERE id=?`;
+                    marca=?, titulo=?, subtitulo=?, modelo=?, caracteristicas=?, imagen1=?, imagen2=? 
+                    WHERE id=?`;
     
     db.query(query, [marca, titulo, subtitulo, modelo, caracteristicas, img1, img2, id], (err, result) => {
-        if (err) return res.status(500).send("Error al actualizar");
+        if (err) return res.status(500).send("Error al actualizar: " + err.message);
         res.redirect('/admin');
     });
 });
@@ -136,7 +145,7 @@ app.post('/admin/promocion', upload.single('banner'), (req, res) => {
     db.query(query, [titulo, imagen_url, link], (err, result) => {
         if (err) {
             console.error('❌ Error al guardar promo:', err.message);
-            return res.status(500).send("Error en la base de datos.");
+            return res.status(500).send("Error en la base de datos: " + err.message);
         }
         res.redirect('/admin');
     });
@@ -146,7 +155,7 @@ app.post('/admin/promocion', upload.single('banner'), (req, res) => {
 app.get('/admin/eliminar-promocion/:id', (req, res) => {
     const { id } = req.params;
     db.query('DELETE FROM promociones WHERE id = ?', [id], (err, result) => {
-        if (err) return res.status(500).send("Error al eliminar promoción");
+        if (err) return res.status(500).send("Error al eliminar promoción: " + err.message);
         res.redirect('/admin');
     });
 });
