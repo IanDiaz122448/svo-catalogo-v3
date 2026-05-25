@@ -54,7 +54,7 @@
             justify-content: center; 
             flex-direction: column; 
             text-align: center;
-            padding: 40px 15px; /* Añadido padding lateral de seguridad para móvil */
+            padding: 40px 0; /* Padding para evitar cortes */
         }
 
         /* Sub-contenedor para panel y texto */
@@ -71,7 +71,7 @@
         /* --- SECCIÓN SERVICIOS --- */
         #servicios {
             background: var(--bg-dark);
-            padding: 80px 5%; /* Un poco más compacto en móvil */
+            padding: 100px 5%;
         }
 
         .services-grid {
@@ -118,12 +118,12 @@
         /* --- SECCIÓN NOSOTROS --- */
         #nosotros {
             background: #111827;
-            padding: 80px 5%;
+            padding: 100px 5%;
         }
 
         .presentation-text {
             max-width: 900px;
-            margin: 0 auto 40px;
+            margin: 0 auto 60px;
             font-size: 1.15rem;
             color: #94a3b8;
             line-height: 1.8;
@@ -133,14 +133,14 @@
         .mission-vision-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 30px;
+            gap: 40px;
             max-width: 1100px;
-            margin: 0 auto 40px;
+            margin: 0 auto 60px;
         }
 
         .mv-card {
             background: rgba(255, 255, 255, 0.03);
-            padding: 35px;
+            padding: 40px;
             border-radius: 20px;
             border: 1px solid rgba(56, 189, 248, 0.1);
             transition: 0.3s;
@@ -264,61 +264,8 @@
             opacity: 1;
         }
 
-        /* --- NUEVAS REGLAS EXCLUSIVAS PARA MEJORAR RESPONSIVIDAD EN TELÉFONOS --- */
         @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                gap: 15px;
-                padding: 15px 10px;
-                text-align: center;
-            }
-
-            header nav ul {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 10px;
-            }
-
-            .hero-section {
-                padding: 30px 15px;
-            }
-
-            .hero-section h1 {
-                font-size: 2rem !important; /* Evita que el título se desborde */
-            }
-
-            .hero-section p {
-                font-size: 1rem !important;
-                margin-bottom: 25px !important;
-            }
-
-            .hero-section .btn {
-                width: 100%; /* Botones a lo ancho de la pantalla para mejor UX con pulgar */
-                max-width: 300px;
-            }
-
-            .hero-content-container {
-                gap: 20px;
-            }
-
-            .mission-vision-container {
-                grid-template-columns: 1fr; /* Pasa de 2 columnas a 1 sola en vertical */
-                gap: 20px;
-            }
-
-            .values-grid {
-                grid-template-columns: 1fr; /* Un valor debajo de otro para fácil lectura */
-                gap: 12px;
-            }
-
-            #servicios, #nosotros {
-                padding: 50px 20px; /* Reducción de espacios muertos en los bordes */
-            }
-            
-            /* En pantallas chicas las etiquetas flotantes estorban, es mejor ocultarlas */
-            .extra-contact::before {
-                display: none;
-            }
+            .mission-vision-container, .values-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -363,7 +310,7 @@
             </div>
             <% } %>
 
-            <div style="text-align: center; width: 100%;">
+            <div style="text-align: center;">
                 <h1>Seguridad que <span>puedes ver</span></h1>
                 <p style="font-size: 1.2rem; color: #94a3b8; margin-bottom: 40px; max-width: 700px; margin-left: auto; margin-right: auto;">Expertos en venta, instalación y mantenimiento de cámaras en Orizaba y la región.</p>
                 <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">

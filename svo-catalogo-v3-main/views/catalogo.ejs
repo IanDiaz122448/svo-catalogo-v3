@@ -77,9 +77,6 @@
         .foto-marco { border: 1px solid var(--card-border); border-radius: 15px; padding: 15px; width: 45%; background-color: #fff; display: flex; justify-content: center; align-items: center; overflow: hidden; }
         .foto-marco img { max-height: 220px; width: auto; border-radius: 8px; object-fit: contain; }
 
-        /* Contenedor extra para los controles móviles del slider */
-        .slider-mobile-controls { display: none; }
-
         .info-basica-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .caja-info { background-color: var(--info-box-bg); padding: 15px; border-radius: 10px; border: 1px solid rgba(0, 174, 239, 0.1); }
         .caja-info span { display: block; font-size: 0.75rem; color: #64748b; margin-bottom: 4px; }
@@ -95,44 +92,18 @@
         .btn-cotizar-premium { display: inline-flex; align-items: center; justify-content: center; gap: 12px; background: linear-gradient(135deg, var(--accent-color), #0ea5e9); color: white; text-decoration: none; font-weight: 800; padding: 16px 45px; border-radius: 14px; text-transform: uppercase; font-size: 1rem; transition: 0.3s; box-shadow: 0 4px 15px rgba(0, 174, 239, 0.3); border: none; cursor: pointer; }
         .btn-cotizar-premium:hover { transform: translateY(-4px); background: #ffffff; color: #003366; }
 
-        .nav-btn { background: var(--accent-color); color: white; border: none; width: 55px; height: 55px; border-radius: 50%; cursor: pointer; font-size: 1.3rem; transition: 0.3s; z-index: 10; flex-shrink: 0; }
+        .nav-btn { background: var(--accent-color); color: white; border: none; width: 55px; height: 55px; border-radius: 50%; cursor: pointer; font-size: 1.3rem; transition: 0.3s; z-index: 10; }
 
         .brands-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 20px; max-width: 1100px; margin: 40px auto; padding: 0 20px; }
         .brand-logo-card { background: white; padding: 20px; border-radius: 12px; height: 100px; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
         .brand-logo-card img { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-        /* --- AJUSTES EXCLUSIVOS DE RESPONSIVIDAD (MÓVIL) --- */
         @media (max-width: 992px) {
-            header { padding: 15px 15px; flex-direction: column; text-align: center; gap: 12px; }
-            nav ul { margin-top: 5px; gap: 12px; flex-wrap: wrap; justify-content: center; }
-            nav ul li a { font-size: 0.8rem; }
-            
-            main { padding-top: 170px !important; }
-            main h1 { font-size: 1.8rem !important; margin-bottom: 20px !important; padding: 0 10px; }
-            
-            /* Reordenamiento del slider en móvil */
-            .slider-wrapper { flex-direction: column; gap: 15px; padding: 0 10px; margin: 20px auto; }
-            .slider-wrapper > .nav-btn { display: none !important; } /* Ocultamos las flechas laterales de PC */
-            
-            /* Habilitamos botonera inferior para navegación móvil cómoda */
-            .slider-mobile-controls { display: flex; justify-content: center; gap: 30px; margin-top: 10px; width: 100%; }
-            .slider-mobile-controls .nav-btn { width: 50px; height: 50px; }
-
-            .ficha-tecnica { padding: 20px 15px; border-radius: 16px; }
-            .ficha-titulo-principal { font-size: 1.3rem; }
-            
-            .caracteristicas-grid, .info-basica-grid { grid-template-columns: 1fr; gap: 12px; }
-            .galeria-fotos { flex-direction: column; align-items: center; gap: 15px; }
-            .foto-marco { width: 100%; max-width: 320px; box-sizing: border-box; }
-            .foto-marco img { max-height: 180px; }
-
-            .btn-cotizar-premium { width: 100%; padding: 14px 20px; font-size: 0.9rem; }
-            .leyenda-ficha { text-align: center; }
-            
-            .brands-grid { grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 12px; padding: 0 15px; }
-            .brand-logo-card { height: 75px; padding: 10px; }
-            
-            .extra-contact::before { display: none !important; }
+            header { padding: 10px 4%; flex-direction: column; }
+            nav ul { margin-top: 15px; gap: 15px; }
+            .caracteristicas-grid, .info-basica-grid { grid-template-columns: 1fr; }
+            .galeria-fotos { flex-direction: column; align-items: center; }
+            .foto-marco { width: 90%; }
         }
     </style>
 </head>
@@ -165,7 +136,6 @@
         
         <div class="slider-wrapper">
             <button class="nav-btn" id="prevBtn"><i class="fas fa-chevron-left"></i></button>
-            
             <div id="slider-content" style="width: 100%;">
                 
                 <% if (productos && productos.length > 0) { %>
@@ -219,15 +189,7 @@
                 <% } %>
 
             </div>
-            
             <button class="nav-btn" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
-            
-            <% if (productos && productos.length > 0) { %>
-                <div class="slider-mobile-controls">
-                    <button class="nav-btn" id="prevBtnMobile"><i class="fas fa-chevron-left"></i></button>
-                    <button class="nav-btn" id="nextBtnMobile"><i class="fas fa-chevron-right"></i></button>
-                </div>
-            <% } %>
         </div>
 
         <section style="text-align: center; padding: 60px 0;">
@@ -263,13 +225,8 @@
         }
 
         if (slides.length > 0) {
-            // Eventos para controles de Escritorio
             document.getElementById('nextBtn').onclick = () => showSlide(currentIdx + 1);
             document.getElementById('prevBtn').onclick = () => showSlide(currentIdx - 1);
-            
-            // Eventos para controles de Móvil
-            document.getElementById('nextBtnMobile').onclick = () => showSlide(currentIdx + 1);
-            document.getElementById('prevBtnMobile').onclick = () => showSlide(currentIdx - 1);
         } else {
             document.getElementById('nextBtn').style.display = 'none';
             document.getElementById('prevBtn').style.display = 'none';

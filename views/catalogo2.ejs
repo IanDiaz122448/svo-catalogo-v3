@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVO - Catálogo Pro</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --dark: #0f172a;
+            --card-bg: #1e293b;
+            --accent: #10b981;
+        }
+
+        body { background-color: var(--dark); color: white; font-family: 'Segoe UI', sans-serif; }
+        
+        .header-catalogo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 5%;
+            background: rgba(15, 23, 42, 0.9);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 7px;
+            font-size: 0.8rem;
+        }
+
+        .grid-productos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            padding: 40px 5%;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s;
+            border: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover { transform: translateY(-10px); }
+
+        .card img { width: 100%; height: 200px; object-fit: cover; }
+
+        .card-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+
+        .badge-stock {
+            background: var(--accent);
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            width: fit-content;
+        }
+
+        .low-stock { background: #f59e0b; }
+
+        /* Estilo para el Precio */
+        .price-tag {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+
+        .btn-add {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: auto;
+            font-weight: bold;
+        }
+
+        .btn-add:disabled { background: #475569; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <header class="header-catalogo">
+        <h1>SVO <span style="color: var(--primary);">Catálogo Pro</span></h1>
+        <div class="cart-icon" onclick="verCarrito()">
+            🛒 <span id="cart-count" class="cart-count">0</span>
+        </div>
+    </header>
+
+    <div class="grid-productos">
+        <% productos.forEach(producto => { %>
+            <div class="card">
+                <img src="<%= producto.imagen1 || '/img/placeholder.jpg' %>" alt="<%= producto.titulo %>">
+                <div class="card-body">
+                    <span class="badge-stock <%= producto.stock < 3 ? 'low-stock' : '' %>">
+                        Existencias: <%= producto.stock %>
+                    </span>
+                    <h3><%= producto.titulo %></h3>
+                    <p style="color: #94a3b8; font-size: 0.85rem;"><%= producto.modelo %></p>
+                    
+                    <div class="price-tag">$<%= producto.precio %></div>
+
+                    <button 
+                        class="btn-add" 
+                        onclick="agregarAlCarrito('<%= producto.id %>', '<%= producto.titulo %>', <%= producto.stock %>, <%= producto.precio %>)"
+                        <%= producto.stock <= 0 ? 'disabled' : '' %>>
+                        <%= producto.stock <= 0 ? 'Agotado' : 'Agregar al Carrito' %>
+                    </button>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+
+    <script>
+        let carrito = JSON.parse(localStorage.getItem('svo_cart')) || [];
+        actualizarContador();
+
+        function agregarAlCarrito(id, nombre, stockDisponible, precio) {
+            const itemEnCarrito = carrito.find(item => item.id === id);
+            
+            if (itemEnCarrito) {
+                if (itemEnCarrito.cantidad < stockDisponible) {
+                    itemEnCarrito.cantidad++;
+                } else {
+                    Swal.fire('Sin existencias', 'No puedes agregar más unidades de este producto', 'warning');
+                    return;
+                }
+            } else {
+                // Guardamos también el precio en el objeto del carrito
+                carrito.push({ id, nombre, cantidad: 1, precio: precio });
+            }
+
+            saveCart();
+            Swal.fire({
+                title: '¡Agregado!',
+                text: `${nombre} está en tu carrito`,
+                icon: 'success',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2000
+            });
+        }
+
+        function saveCart() {
+            localStorage.setItem('svo_cart', JSON.stringify(carrito));
+            actualizarContador();
+        }
+
+        function actualizarContador() {
+            const count = carrito.reduce((total, item) => total + item.cantidad, 0);
+            document.getElementById('cart-count').innerText = count;
+        }
+
+        function verCarrito() {
+            if (carrito.length === 0) {
+                Swal.fire('Carrito vacío', 'Agrega algunos productos primero', 'info');
+                return;
+            }
+
+            let totalCompra = 0;
+            let lista = carrito.map(item => {
+                const subtotal = item.precio * item.cantidad;
+                totalCompra += subtotal;
+                return `- ${item.nombre} (x${item.cantidad}) - $${subtotal}`;
+            }).join('\n');
+            
+            Swal.fire({
+                title: 'Tu Pedido',
+                text: `${lista}\n\nTotal estimado: $${totalCompra}`,
+                showCancelButton: true,
+                confirmButtonText: 'Pedir por WhatsApp',
+                cancelButtonText: 'Cerrar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const msj = encodeURIComponent(`Hola SVO, me interesa este pedido:\n${lista}\n\nTotal: $${totalCompra}`);
+                    window.open(`https://wa.me/522721234567?text=${msj}`, '_blank'); 
+                }
+            });
+        }
+    </script>
+</body>
+</html>

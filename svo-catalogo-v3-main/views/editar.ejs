@@ -22,7 +22,6 @@
             min-height: 100vh;
             margin: 0;
             padding: 20px; 
-            box-sizing: border-box;
         }
 
         .form-card { 
@@ -33,7 +32,6 @@
             max-width: 600px; 
             border: 1px solid rgba(56, 189, 248, 0.2);
             box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-            box-sizing: border-box;
         }
 
         h2 { 
@@ -106,15 +104,6 @@
         }
 
         .hint { font-size: 0.75rem; color: #64748b; margin-top: 5px; }
-
-        /* --- CONTROL DE RESPONSIVIDAD EN MÓVILES --- */
-        @media (max-width: 600px) {
-            body { padding: 10px; }
-            .form-card { padding: 25px 20px; border-radius: 15px; }
-            h2 { font-size: 1.4rem; margin-bottom: 20px; }
-            .file-grid { grid-template-columns: 1fr; gap: 0; }
-            .btn-update { padding: 15px; font-size: 0.95rem; }
-        }
     </style>
 </head>
 <body>
