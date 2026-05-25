@@ -103,10 +103,6 @@
 
         /* --- AJUSTES EXCLUSIVOS DE RESPONSIVIDAD (MÓVIL) --- */
         @media (max-width: 992px) {
-            header { padding: 15px 15px; flex-direction: column; text-align: center; gap: 12px; }
-            nav ul { margin-top: 5px; gap: 12px; flex-wrap: wrap; justify-content: center; }
-            nav ul li a { font-size: 0.8rem; }
-            
             main { padding-top: 170px !important; }
             main h1 { font-size: 1.8rem !important; margin-bottom: 20px !important; padding: 0 10px; }
             
@@ -143,7 +139,12 @@
             <img src="/img/logo.png" alt="SVO Logo" class="logo-img">
             <div class="logo-text">SISTEMAS DE<br>VIDEOVIGILANCIA<br>ORIZABA</div>
         </a>
-        <nav>
+        
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <nav id="navbar">
             <ul>
                 <li><a href="/">INICIO</a></li>
                 <li><a href="/#servicios">SERVICIOS</a></li>
@@ -274,6 +275,24 @@
             document.getElementById('nextBtn').style.display = 'none';
             document.getElementById('prevBtn').style.display = 'none';
         }
+
+        // --- LÓGICA AGREGADA: CONTROL DE MENÚ MÓVIL DESPLEGABLE ---
+        const menuToggle = document.getElementById('menuToggle');
+        const navbar = document.getElementById('navbar');
+
+        menuToggle.addEventListener('click', () => {
+            navbar.classList.toggle('active');
+            
+            // Cambia el ícono de barras a una 'X' al abrir
+            const icon = menuToggle.querySelector('i');
+            if (navbar.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
     </script>
 </body>
 </html>
