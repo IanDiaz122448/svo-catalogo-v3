@@ -396,6 +396,20 @@
             .faq-question { padding: 15px 18px; font-size: 0.95rem; }
             .faq-answer p { padding: 0 18px 15px 18px; font-size: 0.88rem; }
         }
+
+        /* --- ESTILOS DEL PIE DE PÁGINA (FOOTER) --- */
+        footer {
+            background-color: var(--bg-dark);
+            border-top: 1px solid rgba(56, 189, 248, 0.1);
+            padding: 20px 5%;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-top: 50px;
+        }
+        footer p {
+            margin: 0;
+        }
     </style>
 </head>
 <body>
@@ -597,6 +611,10 @@
             </div>
         </div>
     </section>
+
+    <footer>
+        <p>&copy; <%= new Date().getFullYear() %> Sistemas de Videovigilancia Orizaba. Todos los derechos reservados.</p>
+    </footer>
 
     <div class="contact-menu">
         <a href="https://wa.me/522721569109" class="main-contact" target="_blank">
