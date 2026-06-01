@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyectos Destacados - SVO</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+    <header>
+        <a href="/" class="logo-container">
+            <img src="/img/logo.png" alt="SVO Logo" class="logo-img">
+            <span class="logo-text">Sistemas de Videovigilancia Orizaba</span>
+        </a>
+        
+        <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <nav id="navbar">
+            <ul>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/#servicios">Servicios</a></li>
+                <li><a href="/proyectos" style="color:var(--accent-color);">Portafolio</a></li>
+                <li><a href="/catalogo">Catálogo</a></li>
+                <li><a href="/#nosotros">Nosotros</a></li>
+                <li><a href="/cotizar">Cotizar</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- --- SECCIÓN PORTAFOLIO / CASOS DE ÉXITO --- -->
+    <section id="portafolio" style="margin-top: 40px;">
+        <div style="text-align: center;">
+            <h2>Proyectos <span>Destacados</span></h2>
+            <p style="color: #94a3b8;">Casos de éxito e instalaciones reales en Orizaba y la región.</p>
+        </div>
+
+        <div class="portfolio-grid">
+            <!-- Proyecto 1 -->
+            <div class="portfolio-item">
+                <div class="portfolio-img-container">
+                    <span class="portfolio-badge">Comercial</span>
+                    <img src="/img/portafolio/local-comercial.jpg" alt="Instalación en Local Comercial">
+                </div>
+                <div class="portfolio-info">
+                    <h3>Monitoreo Inteligente para Comercio</h3>
+                    <p>Instalación de sistema CCTV de alta definición con cámaras de audio bidireccional y alertas de intrusión nocturna directo al celular del propietario.</p>
+                    <div class="portfolio-tags">
+                        <span><i class="fas fa-camera"></i> 4 Cámaras</span>
+                        <span><i class="fas fa-microphone"></i> Audio</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proyecto 2 -->
+            <div class="portfolio-item">
+                <div class="portfolio-img-container">
+                    <span class="portfolio-badge">Residencial</span>
+                    <img src="/img/portafolio/residencia.jpg" alt="Instalación Residencial">
+                </div>
+                <div class="portfolio-info">
+                    <h3>Seguridad Perimetral Hogar</h3>
+                    <p>Implementación de cámaras con tecnología de visión nocturna a color de largo alcance para el resguardo perimetral de una casa habitación de dos niveles.</p>
+                    <div class="portfolio-tags">
+                        <span><i class="fas fa-moon"></i> ColorVu</span>
+                        <span><i class="fas fa-shield-alt"></i> Exterior</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Proyecto 3 -->
+            <div class="portfolio-item">
+                <div class="portfolio-img-container">
+                    <span class="portfolio-badge">Infraestructura</span>
+                    <img src="/img/portafolio/cableado.jpg" alt="Cableado Estructurado">
+                </div>
+                <div class="portfolio-info">
+                    <h3>Mantenimiento y Cableado Estructurado</h3>
+                    <p>Peinado de rack, sustitución de cableado viejo por UTP 100% cobre certificado y reubicación de grabador para optimizar la señal de video.</p>
+                    <div class="portfolio-tags">
+                        <span><i class="fas fa-network-wired"></i> Voz y Datos</span>
+                        <span><i class="fas fa-tools"></i> Soporte</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="contact-menu">
+        <a href="https://wa.me/522721569109" class="main-contact" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+        </a>
+        <a href="mailto:sistemasvorizaba@gmail.com" class="extra-contact btn-mail" data-label="Enviar Correo">
+            <i class="fas fa-envelope"></i>
+        </a>
+        <a href="https://facebook.com/share/1Avxru13Ca/" class="extra-contact btn-fb" target="_blank" data-label="Facebook">
+            <i class="fab fa-facebook-f"></i>
+        </a>
+    </div>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const navbar = document.getElementById('navbar');
+
+        if (menuToggle && navbar) {
+            menuToggle.addEventListener('click', () => {
+                navbar.classList.toggle('active');
+                const icon = menuToggle.querySelector('i');
+                if (navbar.classList.contains('active')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                } else {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
