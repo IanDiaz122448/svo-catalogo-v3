@@ -46,6 +46,11 @@ app.get('/', (req, res) => {
 
 app.get('/cotizar', (req, res) => res.render('cotizar'));
 
+// === NUEVA RUTA PARA PROYECTOS INDEPENDIENTES ===
+app.get('/proyectos', (req, res) => {
+    res.render('proyectos');
+});
+
 // Catálogo
 app.get('/catalogo', (req, res) => {
     db.query('SELECT * FROM productos', (err, rows) => {
