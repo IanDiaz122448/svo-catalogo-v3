@@ -18,21 +18,21 @@
             --mail-color: #ea4335;
         }
 
-        /* --- ESTILOS OPTIMIZADOS: PANEL DE PROMOS COMPACTO Y LIMITADO --- */
+        /* --- ESTILOS ACTUALIZADOS: AJUSTE EXACTO PARA BANNERS DE CANVA (850x400) --- */
         .promo-section {
             padding: 0; 
             background: transparent; 
             display: flex;
             justify-content: center;
             width: 100%;
-            max-height: 400px; /* Limita la altura máxima de la sección promocional */
+            /* Removido max-height fijo para evitar recortes por desproporción */
             overflow: hidden;
         }
 
         .swiper {
             width: 100%;
-            max-width: 850px;    /* Reducido ligeramente para mayor estética */
-            max-height: 400px;   /* Limita la altura máxima del contenedor Swiper */
+            max-width: 850px;    /* Ancho nativo de tu diseño */
+            height: auto;        /* Permite que la altura escale en la proporción exacta */
             border-radius: 15px;
             overflow: hidden;
             border: 1px solid rgba(56, 189, 248, 0.2);
@@ -44,21 +44,21 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            max-height: 400px;
+            width: 100%;
+            height: auto;
         }
 
         .swiper-slide img {
             width: 100%;
-            height: 100%;      
-            max-height: 400px;   /* Evita que imágenes muy altas deformen el diseño */
+            height: auto;      
             display: block;
-            object-fit: cover;   /* 'cover' para que llene el espacio estéticamente o 'contain' si prefieres no recortar nada */
+            object-fit: contain;   /* 'contain' garantiza que la imagen se adapte al 100% sin recortarse */
         }
 
-        /* Ajustes específicos para pantallas móviles grandes y tablets */
+        /* Ajustes adaptativos automáticos basados en la proporción para móviles y tablets */
         @media (max-width: 768px) {
             .promo-section, .swiper, .swiper-slide, .swiper-slide img {
-                max-height: 250px; /* Tamaño mucho más compacto en móviles */
+                height: auto; 
             }
         }
 
@@ -461,7 +461,7 @@
                         <% banners.forEach(promo => { %>
                         <div class="swiper-slide">
                             <% if (promo.enlace_whatsapp) { %>
-                                <a href="<%= promo.enlace_whatsapp %>" target="_blank" style="width: 100%; height: 100%;">
+                                <a href="<%= promo.enlace_whatsapp %>" target="_blank" style="width: 100%; display: block;">
                                     <img src="<%= promo.imagen_url %>" alt="<%= promo.titulo %>">
                                 </a>
                             <% } else { %>
@@ -646,10 +646,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
-        // --- CONTROL DE SWIPER ORIGINAL ---
+        // --- CONTROL DE SWIPER CORREGIDO ---
         const swiper = new Swiper('.swiper', {
             loop: true,
-            autoHeight: false, /* Desactivado para forzar que respete las alturas máximas de CSS */
+            autoHeight: true, /* Reactivado: obliga al contenedor a calcular la altura matemática exacta del banner */
             autoplay: {
                 delay: 4000,
                 disableOnInteraction: false,
