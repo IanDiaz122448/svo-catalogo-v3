@@ -35,7 +35,6 @@
             border: 1px solid rgba(56, 189, 248, 0.2);
             box-shadow: 0 15px 35px rgba(0,0,0,0.4);
             margin-bottom: 30px;
-            box-sizing: border-box;
         }
 
         h2 { 
@@ -117,9 +116,6 @@
 </head>
 <body>
 
-    <!-- ========================================== -->
-    <!-- SECCIÓN: CATALOGO DE PRODUCTOS            -->
-    <!-- ========================================== -->
     <div class="form-card">
         <h2><i class="fas fa-plus-circle"></i> Nuevo Producto SVO</h2>
         
@@ -212,94 +208,6 @@
         </table>
     </div>
 
-
-    <!-- ========================================== -->
-    <!-- NUEVA SECCIÓN: PANEL DE PROYECTOS          -->
-    <!-- ========================================== -->
-    <div class="form-card">
-        <h2><i class="fas fa-folder-plus"></i> Nuevo Proyecto Destacado</h2>
-        
-        <form action="/admin/proyecto" method="POST" enctype="multipart/form-data">
-            <div class="input-group">
-                <label>Categoría / Badge del Proyecto</label>
-                <select name="badge" required>
-                    <option value="Comercial">Comercial</option>
-                    <option value="Residencial">Residencial</option>
-                    <option value="Infraestructura">Infraestructura</option>
-                    <option value="Industrial">Industrial</option>
-                    <option value="Monitoreo">Monitoreo</option>
-                </select>
-            </div>
-
-            <div class="input-group">
-                <label>Nombre / Título del Proyecto</label>
-                <input type="text" name="titulo" placeholder="Ej: Seguridad Perimetral Hogar" required>
-            </div>
-
-            <div class="input-group">
-                <label>Descripción del Caso de Éxito</label>
-                <textarea name="descripcion" rows="4" placeholder="Ej: Implementación de cámaras con tecnología de visión nocturna a color de largo alcance..." required></textarea>
-            </div>
-
-            <div class="file-grid">
-                <div class="input-group">
-                    <label>Etiqueta Técnica 1</label>
-                    <input type="text" name="tag1" placeholder="Ej: 4 Cámaras o ColorVu" required>
-                </div>
-                <div class="input-group">
-                    <label>Etiqueta Técnica 2</label>
-                    <input type="text" name="tag2" placeholder="Ej: Audio o Exterior" required>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label>Imagen del Proyecto Realizado</label>
-                <input type="file" name="imagen_proyecto" accept="image/*" required>
-                <div class="hint">Se recomienda formato horizontal orientado a portafolio.</div>
-            </div>
-
-            <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, #38bdf8, #0284c7);">
-                <i class="fas fa-folder-plus"></i> PUBLICAR EN PORTAFOLIO
-            </button>
-        </form>
-    </div>
-
-    <div class="table-card">
-        <h2><i class="fas fa-briefcase"></i> Gestionar Portafolio</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Categoría</th>
-                    <th>Título del Proyecto</th>
-                    <th>Vista Previa</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% proyectos.forEach(proyecto => { %>
-                    <tr>
-                        <td><span style="color: var(--accent-color); font-weight: bold;"><%= proyecto.badge %></span></td>
-                        <td><%= proyecto.titulo %></td>
-                        <td>
-                            <img src="<%= proyecto.imagen_url %>" style="height: 40px; width: 60px; object-fit: cover; border-radius: 4px; border: 1px solid #334155;">
-                        </td>
-                        <td class="actions">
-                            <a href="/admin/eliminar-proyecto/<%= proyecto.id %>" 
-                               class="btn-action btn-delete" 
-                               onclick="return confirm('¿Seguro que quieres eliminar este proyecto del portafolio?')">
-                                 <i class="fas fa-trash"></i>
-                            </a>
-                        </td>
-                    </tr>
-                <% }) %>
-            </tbody>
-        </table>
-    </div>
-
-
-    <!-- ========================================== -->
-    <!-- SECCIÓN: GESTIÓN DE BANNERS                -->
-    <!-- ========================================== -->
     <div class="form-card">
         <h2><i class="fas fa-ad"></i> Nueva Promoción (Canva)</h2>
         <form action="/admin/promocion" method="POST" enctype="multipart/form-data">
