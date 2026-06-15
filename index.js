@@ -1,1 +1,0 @@
-require('./svo-catalogo-v3-main/index.js');
