@@ -90,6 +90,10 @@ app.post('/admin/subir', upload.fields([{ name: 'imagen1' }, { name: 'imagen2' }
     if (!req.body) return res.status(400).send("No se recibieron datos.");
     // Extraemos precio y stock del req.body
     const { marca, titulo, subtitulo, modelo, caracteristicas, precio, stock } = req.body;
+    
+    // Forzar que el stock sea un número entero para evitar errores en las condiciones de las vistas
+    const stockNumerico = parseInt(stock, 10) || 0;
+
     const img1 = req.files['imagen1'] ? req.files['imagen1'][0].path : null;
     const img2 = req.files['imagen2'] ? req.files['imagen2'][0].path : null;
 
@@ -98,7 +102,7 @@ app.post('/admin/subir', upload.fields([{ name: 'imagen1' }, { name: 'imagen2' }
                     (marca, titulo, subtitulo, modelo, caracteristicas, precio, stock, imagen1, imagen2) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     
-    db.query(query, [marca, titulo, subtitulo, modelo, caracteristicas, precio, stock, img1, img2], (err, result) => {
+    db.query(query, [marca, titulo, subtitulo, modelo, caracteristicas, precio, stockNumerico, img1, img2], (err, result) => {
         if (err) {
             console.error('❌ Error al insertar:', err.message);
             return res.status(500).send("Error al guardar en la base de datos.");
@@ -128,6 +132,9 @@ app.post('/admin/actualizar/:id', upload.fields([{ name: 'imagen1' }, { name: 'i
     // Extraemos precio y stock para actualizar
     const { marca, titulo, subtitulo, modelo, caracteristicas, precio, stock } = req.body;
     
+    // Forzar que el stock sea un número entero para que el catálogo evalúe correctamente las existencias
+    const stockNumerico = parseInt(stock, 10) || 0;
+    
     const img1 = req.files['imagen1'] ? req.files['imagen1'][0].path : req.body.old_img1;
     const img2 = req.files['imagen2'] ? req.files['imagen2'][0].path : req.body.old_img2;
 
@@ -136,7 +143,7 @@ app.post('/admin/actualizar/:id', upload.fields([{ name: 'imagen1' }, { name: 'i
                     marca=?, titulo=?, subtitulo=?, modelo=?, caracteristicas=?, precio=?, stock=?, imagen1=?, imagen2=? 
                     WHERE id=?`;
     
-    db.query(query, [marca, titulo, subtitulo, modelo, caracteristicas, precio, stock, img1, img2, id], (err, result) => {
+    db.query(query, [marca, titulo, subtitulo, modelo, caracteristicas, precio, stockNumerico, img1, img2, id], (err, result) => {
         if (err) return res.status(500).send("Error al actualizar");
         res.redirect('/admin');
     });
