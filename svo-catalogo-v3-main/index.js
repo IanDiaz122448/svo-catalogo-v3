@@ -62,6 +62,28 @@ app.get('/catalogo', (req, res) => {
     });
 });
 
+// === SECCIÓN: CARRITO DE COMPRAS ===
+
+// Ruta para renderizar la página de la cesta de compras
+app.get('/carrito', (req, res) => {
+    res.render('carrito');
+});
+
+// API interna para recibir el pedido del cliente y guardarlo en MySQL
+app.post('/api/pedidos/nuevo', (req, res) => {
+    const { nombre, telefono, productos, total } = req.body;
+    
+    const query = 'INSERT INTO pedidos (nombre, telefono, productos, total, estado) VALUES (?, ?, ?, ?, ?)';
+    
+    db.query(query, [nombre, telefono, productos, total, 'pendiente'], (err, result) => {
+        if (err) {
+            console.error('❌ Error al guardar pedido en BD:', err.message);
+            return res.status(500).json({ error: "Error en la base de datos" });
+        }
+        res.status(200).json({ success: true, message: "Pedido registrado con éxito" });
+    });
+});
+
 // Panel de Admin (Muestra productos, promociones y pedidos)
 app.get('/admin', (req, res) => {
     db.query('SELECT * FROM productos', (err, productos) => {

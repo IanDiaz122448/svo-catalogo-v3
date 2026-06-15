@@ -25,7 +25,7 @@
             margin: 0;
         }
 
-        /* --- HEADER LITERAL --- */
+        /* --- HEADER --- */
         header {
             background: #ffffff;
             border-bottom: 2px solid #f3f4f6;
@@ -45,9 +45,13 @@
         .logo-img { height: 55px; width: auto; }
         .logo-text { color: #003366; font-family: 'Arial Black', sans-serif; font-size: 0.95rem; line-height: 1.1; text-transform: uppercase; font-weight: 900; }
 
-        nav ul { list-style: none; display: flex; gap: 30px; margin: 0; padding: 0; }
+        nav ul { list-style: none; display: flex; align-items: center; gap: 30px; margin: 0; padding: 0; }
         nav ul li a { text-decoration: none; color: #1f2937; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; transition: 0.3s; }
         nav ul li a.active, nav ul li a:hover { color: var(--accent-color); }
+
+        /* Icono Carrito Menú */
+        .cart-nav-link { position: relative; display: flex; align-items: center; color: #1f2937 !important; font-size: 1.2rem; }
+        .cart-badge { position: absolute; top: -8px; right: -12px; background: #ea4335; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; font-weight: bold; }
 
         /* --- MENÚ DE CONTACTO FLOTANTE --- */
         .contact-menu { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column-reverse; align-items: center; gap: 15px; z-index: 2000; }
@@ -56,8 +60,6 @@
         .btn-fb { background-color: var(--fb-color); }
         .btn-mail { background-color: var(--mail-color); }
         .contact-menu:hover .extra-contact { opacity: 1; visibility: visible; transform: translateY(0); }
-        .extra-contact::before { content: attr(data-label); position: absolute; right: 70px; background: rgba(0,0,0,0.8); color: white; padding: 6px 14px; border-radius: 8px; font-size: 0.85rem; opacity: 0; transition: 0.3s; white-space: nowrap; pointer-events: none; }
-        .extra-contact:hover::before { opacity: 1; }
 
         /* --- ESTRUCTURA DEL SLIDER --- */
         .slider-wrapper { display: flex; align-items: center; justify-content: center; gap: 20px; max-width: 1100px; margin: 50px auto; padding: 0 20px; }
@@ -91,6 +93,7 @@
         .cotizar-wrapper { display: flex; justify-content: center; width: 100%; margin: 30px 0 10px 0; }
         .btn-cotizar-premium { display: inline-flex; align-items: center; justify-content: center; gap: 12px; background: linear-gradient(135deg, var(--accent-color), #0ea5e9); color: white; text-decoration: none; font-weight: 800; padding: 16px 45px; border-radius: 14px; text-transform: uppercase; font-size: 1rem; transition: 0.3s; box-shadow: 0 4px 15px rgba(0, 174, 239, 0.3); border: none; cursor: pointer; }
         .btn-cotizar-premium:hover { transform: translateY(-4px); background: #ffffff; color: #003366; }
+        .btn-cotizar-premium.disabled { background: #475569; color: #94a3b8; cursor: not-allowed; box-shadow: none; pointer-events: none; }
 
         .nav-btn { background: var(--accent-color); color: white; border: none; width: 55px; height: 55px; border-radius: 50%; cursor: pointer; font-size: 1.3rem; transition: 0.3s; z-index: 10; }
 
@@ -116,20 +119,22 @@
         </a>
         <nav>
             <ul>
-                <li><a href="/" style="color:var(--accent-color);">Inicio</a></li>
-                <li><a href="#servicios">Servicios</a></li>
+                <li><a href="/">Inicio</a></li>
                 <li><a href="/proyectos">Proyectos</a></li>
-                <li><a href="/catalogo">Catálogo</a></li>
-                <li><a href="#nosotros">Nosotros</a></li>
+                <li><a href="/catalogo" style="color:var(--accent-color);">Catálogo</a></li>
                 <li><a href="/cotizar">Cotizar</a></li>
+                <li>
+                    <a href="/carrito" class="cart-nav-link">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-badge" id="cartBadge">0</span>
+                    </a>
+                </li>
             </ul>
         </nav>
     </header>
 
     <div class="contact-menu">
         <a href="https://wa.me/522721569109" class="main-contact" target="_blank"><i class="fab fa-whatsapp"></i></a>
-        <a href="mailto:svo.ventas01@gmail.com" class="extra-contact btn-mail" data-label="Correo Electrónico"><i class="fas fa-envelope"></i></a>
-        <a href="https://www.facebook.com/SistemasDeVideovigilanciaOrizaba" class="extra-contact btn-fb" target="_blank" data-label="Facebook"><i class="fab fa-facebook-f"></i></a>
     </div>
 
     <main style="padding-top: 140px;">
@@ -187,9 +192,15 @@
                                 <div class="leyenda-ficha">Diseño profesional garantizado por SVO</div>
 
                                 <div class="cotizar-wrapper">
-                                    <a href="https://wa.me/522721569109?text=Hola,%20me%20interesa%20adquirir%20el%20modelo%20<%= prod.modelo %>%20(<%= prod.titulo %>)%20con%20un%20precio%20de%20$<%= prod.precio %>" target="_blank" class="btn-cotizar-premium">
-                                        <i class="fas fa-file-invoice-dollar"></i> Adquirir este Equipo
-                                    </a>
+                                    <% if (prod.stock > 0) { %>
+                                        <button class="btn-cotizar-premium" onclick="agregarAlCarrito('<%= prod.id %>', '<%= prod.titulo %>', '<%= prod.precio %>', '<%= prod.modelo %>', '<%= prod.imagen1 %>')">
+                                            <i class="fas fa-cart-plus"></i> Agregar al Carrito
+                                        </button>
+                                    <% } else { %>
+                                        <button class="btn-cotizar-premium disabled" disabled>
+                                            <i class="fas fa-times-circle"></i> Agotado
+                                        </button>
+                                    <% } %>
                                 </div>
                             </div>
                         </div>
@@ -204,29 +215,10 @@
             </div>
             <button class="nav-btn" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
         </div>
-
-        <section style="text-align: center; padding: 60px 0;">
-            <h2 style="margin-bottom: 40px;">Marcas <span style="color: var(--accent-color);">Autorizadas</span></h2>
-            <div class="brands-grid">
-                <div class="brand-logo-card"><img src="/img/hikvision2.png"></div>
-                <div class="brand-logo-card"><img src="/img/Dahua2.png"></div>
-                <div class="brand-logo-card"><img src="/img/HiLook2.jpg"></div>
-                <div class="brand-logo-card"><img src="/img/Ezviz2.png"></div>
-                <div class="brand-logo-card"><img src="/img/uniview2.png"></div>
-                <div class="brand-logo-card"><img src="/img/IMOU2.png"></div>
-                <div class="brand-logo-card"><img src="/img/tplink2.jpg"></div>
-                <div class="brand-logo-card"><img src="/img/Honeywell2.png"></div>
-                <div class="brand-logo-card"><img src="/img/zkteco2.png"></div>
-                <div class="brand-logo-card"><img src="/img/logitech2.png"></div>
-                <div class="brand-logo-card"><img src="/img/axis2.jpg"></div>
-                <div class="brand-logo-card"><img src="/img/Bosch2.png"></div>
-                <div class="brand-logo-card"><img src="/img/epcom2.png"></div>
-            </div>
-            <p style="color: #64748b; font-style: italic; margin-top: 20px;">Y muchas marcas más para cada necesidad...</p>
-        </section>
     </main>
 
     <script>
+        // Lógica del Slider
         const slides = document.querySelectorAll('.product-slide');
         let currentIdx = 0;
         
@@ -244,6 +236,35 @@
             document.getElementById('nextBtn').style.display = 'none';
             document.getElementById('prevBtn').style.display = 'none';
         }
+
+        // --- LÓGICA DEL CARRITO DE COMPRAS (TIPO MERCADO LIBRE) ---
+        let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+
+        function actualizarContador() {
+            const badge = document.getElementById('cartBadge');
+            const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+            if(badge) badge.innerText = totalItems;
+        }
+
+        function agregarAlCarrito(id, titulo, precio, modelo, imagen) {
+            const precioNum = parseFloat(precio) || 0;
+            const existe = carrito.find(item => item.id === id);
+
+            if (existe) {
+                existe.cantidad += 1;
+            } else {
+                carrito.push({ id, titulo, precio: precioNum, modelo, imagen, cantidad: 1 });
+            }
+
+            localStorage.setItem('carrito', JSON.stringify(carrito));
+            actualizarContador();
+            
+            // Efecto visual básico de éxito
+            alert(`✅ ${titulo} se agregó al carrito.`);
+        }
+
+        // Inicializar el contador al entrar a la página
+        actualizarContador();
     </script>
 </body>
 </html>
