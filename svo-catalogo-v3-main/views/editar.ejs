@@ -151,6 +151,17 @@
                 <textarea name="caracteristicas" rows="5" required><%= producto.caracteristicas %></textarea>
             </div>
 
+            <div class="file-grid">
+                <div class="input-group">
+                    <label>Precio ($)</label>
+                    <input type="number" name="precio" step="0.01" value="<%= producto.precio %>" required>
+                </div>
+                <div class="input-group">
+                    <label>Stock Disponible</label>
+                    <input type="number" name="stock" value="<%= producto.stock %>" required>
+                </div>
+            </div>
+
             <input type="hidden" name="old_img1" value="<%= producto.imagen1 %>">
             <input type="hidden" name="old_img2" value="<%= producto.imagen2 %>">
 
