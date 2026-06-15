@@ -35,6 +35,7 @@
             border: 1px solid rgba(56, 189, 248, 0.2);
             box-shadow: 0 15px 35px rgba(0,0,0,0.4);
             margin-bottom: 30px;
+            box-sizing: border-box;
         }
 
         h2 { 
@@ -112,6 +113,18 @@
         .btn-action:hover { opacity: 0.8; transform: scale(1.05); }
 
         .hint { font-size: 0.75rem; color: #64748b; margin-top: 5px; }
+
+        /* Estados de Pedidos */
+        .badge-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .status-pendiente { background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid #f59e0b; }
+        .status-proceso { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid #38bdf8; }
+        .status-completado { background: rgba(34, 197, 94, 0.2); color: #22c55e; border: 1px solid #22c55e; }
     </style>
 </head>
 <body>
@@ -147,6 +160,17 @@
             <div class="input-group">
                 <label>Detalles Rápidos (Debajo del título)</label>
                 <input type="text" name="subtitulo" placeholder="Ej: DVR 4 Canales • 4 Cámaras • Accesorios" required>
+            </div>
+
+            <div class="file-grid">
+                <div class="input-group">
+                    <label>Precio de Venta ($ MXN)</label>
+                    <input type="number" name="precio" placeholder="Ej: 2999" min="0" required>
+                </div>
+                <div class="input-group">
+                    <label>Stock / Disponibilidad Inicial</label>
+                    <input type="number" name="stock" placeholder="Ej: 10" min="0" required>
+                </div>
             </div>
 
             <div class="input-group">
@@ -204,6 +228,142 @@
                         </td>
                     </tr>
                 <% }) %>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-card">
+        <h2><i class="fas fa-shopping-cart"></i> Pedidos Recibidos (Tienda en Línea)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Cliente / Contacto</th>
+                    <th>Productos Solicitados</th>
+                    <th>Total</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (typeof pedidos !== 'undefined' && pedidos) { %>
+                    <% pedidos.forEach(pedido => { %>
+                        <tr>
+                            <td>
+                                <strong><%= pedido.cliente_nombre %></strong><br>
+                                <span style="font-size: 0.8rem; color: #94a3b8;"><%= pedido.cliente_telefono %></span>
+                            </td>
+                            <td>
+                                <span style="font-size: 0.85rem;"><%= pedido.resumen_productos %></span>
+                            </td>
+                            <td style="font-weight: bold; color: var(--accent-color);">
+                                $<%= pedido.total %> MXN
+                            </td>
+                            <td>
+                                <% if(pedido.estado === 'pendiente') { %>
+                                    <span class="badge-status status-pendiente">Pendiente</span>
+                                <% } else if(pedido.estado === 'proceso') { %>
+                                    <span class="badge-status status-proceso">En camino</span>
+                                <% } else { %>
+                                    <span class="badge-status status-completado">Entregado</span>
+                                <% } %>
+                            </td>
+                            <td class="actions">
+                                <a href="/admin/pedido-estado/<%= pedido.id %>" class="btn-action btn-edit" title="Actualizar Estado">
+                                    <i class="fas fa-sync-alt"></i>
+                                </a>
+                                <a href="/admin/eliminar-pedido/<%= pedido.id %>" 
+                                   class="btn-action btn-delete" 
+                                   onclick="return confirm('¿Eliminar registro de pedido?')">
+                                     <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #64748b;">La tabla de pedidos estará activa cuando conectes la base de datos de compras.</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="form-card">
+        <h2><i class="fas fa-folder-plus"></i> Nuevo Proyecto Destacado</h2>
+        
+        <form action="/admin/proyecto" method="POST" enctype="multipart/form-data">
+            <div class="input-group">
+                <label>Categoría del Proyecto</label>
+                <select name="badge" required>
+                    <option value="Comercial">Comercial</option>
+                    <option value="Residencial">Residencial</option>
+                    <option value="Infraestructura">Infraestructura</option>
+                    <option value="Industrial">Industrial</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Nombre / Título del Proyecto</label>
+                <input type="text" name="titulo" placeholder="Ej: Seguridad Perimetral Hogar" required>
+            </div>
+
+            <div class="input-group">
+                <label>Descripción del Caso de Éxito</label>
+                <textarea name="descripcion" rows="4" placeholder="Ej: Implementación de cámaras con tecnología de visión nocturna a color..." required></textarea>
+            </div>
+
+            <div class="file-grid">
+                <div class="input-group">
+                    <label>Etiqueta Técnica 1</label>
+                    <input type="text" name="tag1" placeholder="Ej: 4 Cámaras" required>
+                </div>
+                <div class="input-group">
+                    <label>Etiqueta Técnica 2</label>
+                    <input type="text" name="tag2" placeholder="Ej: Exterior" required>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Imagen de la Instalación Realizada</label>
+                <input type="file" name="imagen_proyecto" accept="image/*" required>
+            </div>
+
+            <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, #38bdf8, #0284c7);">
+                <i class="fas fa-cloud-upload-alt"></i> PUBLICAR EN PORTAFOLIO
+            </button>
+        </form>
+    </div>
+
+    <div class="table-card">
+        <h2><i class="fas fa-briefcase"></i> Gestionar Portafolio</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Categoría</th>
+                    <th>Título del Proyecto</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (typeof proyectos !== 'undefined' && proyectos) { %>
+                    <% proyectos.forEach(proyecto => { %>
+                        <tr>
+                            <td><span style="color: var(--accent-color); font-weight: bold;"><%= proyecto.badge %></span></td>
+                            <td><%= proyecto.titulo %></td>
+                            <td class="actions">
+                                <a href="/admin/eliminar-proyecto/<%= proyecto.id %>" 
+                                   class="btn-action btn-delete" 
+                                   onclick="return confirm('¿Seguro que quieres eliminar este proyecto?')">
+                                     <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="3" style="text-align: center; color: #64748b;">El backend aún no está enviando la lista de proyectos activos.</td>
+                    </tr>
+                <% } %>
             </tbody>
         </table>
     </div>

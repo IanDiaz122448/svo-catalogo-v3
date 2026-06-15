@@ -62,14 +62,24 @@ app.get('/catalogo', (req, res) => {
     });
 });
 
-// Panel de Admin (Muestra productos y promociones)
+// Panel de Admin (Muestra productos, promociones y pedidos)
 app.get('/admin', (req, res) => {
     db.query('SELECT * FROM productos', (err, productos) => {
         if (err) return res.send("Error al cargar productos");
         
         db.query('SELECT * FROM promociones', (err, promociones) => {
             if (err) return res.send("Error al cargar promociones");
-            res.render('admin', { productos: productos, promociones: promociones });
+            
+            // Consultamos la tabla de pedidos para que admin.ejs no falle
+            db.query('SELECT * FROM pedidos ORDER BY id DESC', (err, pedidos) => {
+                // Si la tabla aún no existe o falla, pasamos un array vacío para evitar caídas
+                const listaPedidos = err ? [] : pedidos;
+                res.render('admin', { 
+                    productos: productos, 
+                    promociones: promociones, 
+                    pedidos: listaPedidos 
+                });
+            });
         });
     });
 });
@@ -78,15 +88,17 @@ app.get('/admin', (req, res) => {
 
 app.post('/admin/subir', upload.fields([{ name: 'imagen1' }, { name: 'imagen2' }]), (req, res) => {
     if (!req.body) return res.status(400).send("No se recibieron datos.");
-    const { marca, titulo, subtitulo, modelo, caracteristicas } = req.body;
+    // Extraemos precio y stock del req.body
+    const { marca, titulo, subtitulo, modelo, caracteristicas, precio, stock } = req.body;
     const img1 = req.files['imagen1'] ? req.files['imagen1'][0].path : null;
     const img2 = req.files['imagen2'] ? req.files['imagen2'][0].path : null;
 
+    // Añadimos precio y stock al INSERT
     const query = `INSERT INTO productos 
-                   (marca, titulo, subtitulo, modelo, caracteristicas, imagen1, imagen2) 
-                   VALUES (?, ?, ?, ?, ?, ?, ?)`;
+                    (marca, titulo, subtitulo, modelo, caracteristicas, precio, stock, imagen1, imagen2) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     
-    db.query(query, [marca, titulo, subtitulo, modelo, caracteristicas, img1, img2], (err, result) => {
+    db.query(query, [marca, titulo, subtitulo, modelo, caracteristicas, precio, stock, img1, img2], (err, result) => {
         if (err) {
             console.error('❌ Error al insertar:', err.message);
             return res.status(500).send("Error al guardar en la base de datos.");
@@ -113,22 +125,53 @@ app.get('/admin/editar/:id', (req, res) => {
 
 app.post('/admin/actualizar/:id', upload.fields([{ name: 'imagen1' }, { name: 'imagen2' }]), (req, res) => {
     const { id } = req.params;
-    const { marca, titulo, subtitulo, modelo, caracteristicas } = req.body;
+    // Extraemos precio y stock para actualizar
+    const { marca, titulo, subtitulo, modelo, caracteristicas, precio, stock } = req.body;
     
     const img1 = req.files['imagen1'] ? req.files['imagen1'][0].path : req.body.old_img1;
     const img2 = req.files['imagen2'] ? req.files['imagen2'][0].path : req.body.old_img2;
 
+    // Añadimos precio=? y stock=? al UPDATE
     const query = `UPDATE productos SET 
-                   marca=?, titulo=?, subtitulo=?, modelo=?, caracteristicas=?, imagen1=?, imagen2=? 
-                   WHERE id=?`;
+                    marca=?, titulo=?, subtitulo=?, modelo=?, caracteristicas=?, precio=?, stock=?, imagen1=?, imagen2=? 
+                    WHERE id=?`;
     
-    db.query(query, [marca, titulo, subtitulo, modelo, caracteristicas, img1, img2, id], (err, result) => {
+    db.query(query, [marca, titulo, subtitulo, modelo, caracteristicas, precio, stock, img1, img2, id], (err, result) => {
         if (err) return res.status(500).send("Error al actualizar");
         res.redirect('/admin');
     });
 });
 
-// --- NUEVA SECCIÓN: PROMOCIONES ---
+// --- SECCIÓN: PEDIDOS TIENDA EN LÍNEA ---
+
+// Ruta para eliminar registros de pedidos
+app.get('/admin/eliminar-pedido/:id', (req, res) => {
+    const { id } = req.params;
+    db.query('DELETE FROM pedidos WHERE id = ?', [id], (err, result) => {
+        if (err) return res.status(500).send("Error al eliminar el pedido");
+        res.redirect('/admin');
+    });
+});
+
+// Ruta para alternar o cambiar el estado del pedido (Pendiente -> Proceso -> Completado)
+app.get('/admin/pedido-estado/:id', (req, res) => {
+    const { id } = req.params;
+    
+    db.query('SELECT estado FROM pedidos WHERE id = ?', [id], (err, rows) => {
+        if (err || rows.length === 0) return res.status(404).send("Pedido no encontrado");
+        
+        let nuevoEstado = 'pendiente';
+        if (rows[0].estado === 'pendiente') nuevoEstado = 'proceso';
+        else if (rows[0].estado === 'proceso') nuevoEstado = 'completado';
+        
+        db.query('UPDATE pedidos SET estado = ? WHERE id = ?', [nuevoEstado, id], (err, result) => {
+            if (err) return res.status(500).send("Error al actualizar estado");
+            res.redirect('/admin');
+        });
+    });
+});
+
+// --- SECCIÓN DE PROMOCIONES ---
 
 // Subir banner de promoción
 app.post('/admin/promocion', upload.single('banner'), (req, res) => {
