@@ -51,6 +51,11 @@ app.get('/proyectos', (req, res) => {
     res.render('proyectos');
 });
 
+// === RUTA AGREGADA PARA EL CARRITO DE COMPRAS ===
+app.get('/carrito', (req, res) => {
+    res.render('carrito');
+});
+
 // Catálogo
 app.get('/catalogo', (req, res) => {
     db.query('SELECT * FROM productos', (err, rows) => {
