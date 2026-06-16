@@ -10,7 +10,7 @@
     
     <style>
         :root {
-            --accent-color: #38bdf8; /* Azul SVO */
+            --accent-color: #00aeef; /* Azul vibrante unificado */
             --bg-dark: #0f172a;
             --card-bg: #1e293b;
             --wa-color: #25d366;
@@ -18,21 +18,80 @@
             --mail-color: #ea4335;
         }
 
-        /* --- ESTILOS ACTUALIZADOS: AJUSTE EXACTO PARA BANNERS DE CANVA (850x400) --- */
+        /* --- HEADER UNIFICADO CON EL DISEÑO DE CATÁLOGO --- */
+        header {
+            background: #ffffff;
+            border-bottom: 2px solid #f3f4f6;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 8%;
+            box-sizing: border-box;
+        }
+
+        .logo-link { display: flex; align-items: center; text-decoration: none; gap: 15px; }
+        .logo-img { height: 55px; width: auto; }
+        .logo-text { color: #003366; font-family: 'Arial Black', sans-serif; font-size: 0.95rem; line-height: 1.1; text-transform: uppercase; font-weight: 900; }
+
+        nav ul { list-style: none; display: flex; align-items: center; gap: 30px; margin: 0; padding: 0; }
+        nav ul li a { text-decoration: none; color: #1f2937; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; transition: 0.3s; }
+        nav ul li a.active, nav ul li a:hover { color: var(--accent-color); }
+
+        /* Icono y Texto del Carrito en Menú */
+        .cart-nav-link { 
+            position: relative; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            color: #1f2937 !important; 
+            font-size: 0.85rem; 
+        }
+        .cart-badge { 
+            position: absolute; 
+            top: -12px; 
+            right: -14px; 
+            background: #ea4335; 
+            color: white; 
+            border-radius: 50%; 
+            width: 18px; 
+            height: 18px; 
+            font-size: 0.7rem; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: bold; 
+        }
+
+        /* --- BOTÓN HAMBURGUESA PARA RESPONSIVIDAD INTEGRADA --- */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #003366;
+            font-size: 1.6rem;
+            cursor: pointer;
+            z-index: 1100;
+        }
+
+        /* --- ESTILOS: AJUSTE EXACTO PARA BANNERS DE CANVA (850x400) --- */
         .promo-section {
             padding: 0; 
             background: transparent; 
             display: flex;
             justify-content: center;
             width: 100%;
-            /* Removido max-height fijo para evitar recortes por desproporción */
             overflow: hidden;
         }
 
         .swiper {
             width: 100%;
-            max-width: 850px;    /* Ancho nativo de tu diseño */
-            height: auto;        /* Permite que la altura escale en la proporción exacta */
+            max-width: 850px;    
+            height: auto;        
             border-radius: 15px;
             overflow: hidden;
             border: 1px solid rgba(56, 189, 248, 0.2);
@@ -52,14 +111,7 @@
             width: 100%;
             height: auto;      
             display: block;
-            object-fit: contain;   /* 'contain' garantiza que la imagen se adapte al 100% sin recortarse */
-        }
-
-        /* Ajustes adaptativos automáticos basados en la proporción para móviles y tablets */
-        @media (max-width: 768px) {
-            .promo-section, .swiper, .swiper-slide, .swiper-slide img {
-                height: auto; 
-            }
+            object-fit: contain;   
         }
 
         /* --- ESTILOS DE LA SECCIÓN HERO --- */
@@ -71,10 +123,9 @@
             justify-content: center; 
             flex-direction: column; 
             text-align: center;
-            padding: 40px 0; 
+            padding: 180px 0 40px 0; /* Espacio para el header fijo */
         }
 
-        /* Sub-contenedor para panel y texto */
         .hero-content-container {
             width: 100%;
             max-width: 1200px; 
@@ -201,7 +252,7 @@
         .value-item i { color: var(--accent-color); }
         .value-item:hover i { color: #000; }
 
-        /* --- MENÚ DE CONTACTO DESPLEGABLE --- */
+        /* --- MENÚ DE CONTACTO FLOTANTE --- */
         .contact-menu {
             position: fixed;
             bottom: 25px;
@@ -210,7 +261,7 @@
             flex-direction: column-reverse;
             align-items: center;
             gap: 15px;
-            z-index: 1000;
+            z-index: 2000;
         }
 
         .main-contact {
@@ -226,6 +277,7 @@
             box-shadow: 0 6px 15px rgba(0,0,0,0.4);
             cursor: pointer;
             transition: all 0.3s ease;
+            text-decoration: none;
             z-index: 1001;
         }
 
@@ -244,6 +296,7 @@
             visibility: hidden;
             transform: translateY(20px);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
         }
 
         .btn-fb { background-color: var(--fb-color); transition-delay: 0.05s; }
@@ -275,28 +328,14 @@
             opacity: 0;
             transition: 0.3s;
             pointer-events: none;
+            white-space: nowrap;
         }
 
         .extra-contact:hover::before {
             opacity: 1;
         }
 
-        /* --- BOTÓN HAMBURGUESA PARA RESPONSIVIDAD INTEGRADA --- */
-        .menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: #003366;
-            font-size: 1.6rem;
-            cursor: pointer;
-            z-index: 1100;
-        }
-
-        @media (max-width: 768px) {
-            .mission-vision-container, .values-grid { grid-template-columns: 1fr; }
-        }
-
-        /* Reglas adaptativas complementarias que previenen pantallas en blanco */
+        /* --- RESPONSIVIDAD DEL HEADER --- */
         @media (max-width: 992px) {
             header {
                 padding: 10px 5% !important;
@@ -310,10 +349,10 @@
             }
             nav {
                 position: fixed;
-                top: 75px; 
+                top: 80px; 
                 left: -100%;
                 width: 100%;
-                height: calc(100vh - 75px);
+                height: calc(100vh - 80px);
                 background: #ffffff;
                 transition: 0.4s ease;
                 box-shadow: 0 4px 10px rgba(0,0,0,0.1);
@@ -331,110 +370,42 @@
             }
         }
 
-        /* --- NUEVOS ESTILOS DE LA SECCIÓN FAQ --- */
-        .faq-section {
-            max-width: 900px;
-            margin: 60px auto;
-            padding: 0 20px;
+        @media (max-width: 768px) {
+            .mission-vision-container, .values-grid { grid-template-columns: 1fr; }
+            .promo-section, .swiper, .swiper-slide, .swiper-slide img { height: auto; }
+            .hero-section { padding-top: 160px; }
         }
-        .faq-title {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            color: #fff;
-        }
-        .faq-subtitle {
-            text-align: center;
-            color: #94a3b8;
-            margin-bottom: 40px;
-            font-size: 1rem;
-        }
-        .faq-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .faq-item {
-            background-color: var(--card-bg);
-            border: 1px solid rgba(56, 189, 248, 0.1);
-            border-radius: 12px;
-            overflow: hidden;
-            transition: 0.3s ease;
-        }
-        .faq-item:hover {
-            border-color: rgba(56, 189, 248, 0.4);
-            box-shadow: 0 4px 20px rgba(56, 189, 248, 0.05);
-        }
-        .faq-question {
-            width: 100%;
-            background: none;
-            border: none;
-            outline: none;
-            padding: 20px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: white;
-            font-size: 1.05rem;
-            font-weight: 700;
-            cursor: pointer;
-            text-align: left;
-            transition: 0.3s;
-        }
-        .faq-icon {
-            color: var(--accent-color);
-            margin-right: 12px;
-            font-size: 1.2rem;
-        }
-        .arrow-icon {
-            font-size: 1rem;
-            color: #64748b;
-            transition: transform 0.3s ease;
-        }
-        .faq-item.active .arrow-icon {
-            transform: rotate(180deg);
-            color: var(--accent-color);
-        }
-        .faq-answer {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-            background-color: rgba(255, 255, 255, 0.01);
-        }
-        .faq-answer p {
-            padding: 0 25px 20px 25px;
-            margin: 0;
-            color: #cbd5e1;
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
+
+        /* --- FAQ SECTION --- */
+        .faq-section { max-width: 900px; margin: 60px auto; padding: 0 20px; }
+        .faq-title { text-align: center; font-size: 2.5rem; margin-bottom: 10px; color: #fff; }
+        .faq-subtitle { text-align: center; color: #94a3b8; margin-bottom: 40px; font-size: 1rem; }
+        .faq-container { display: flex; flex-direction: column; gap: 15px; }
+        .faq-item { background-color: var(--card-bg); border: 1px solid rgba(56, 189, 248, 0.1); border-radius: 12px; overflow: hidden; transition: 0.3s ease; }
+        .faq-item:hover { border-color: rgba(56, 189, 248, 0.4); box-shadow: 0 4px 20px rgba(56, 189, 248, 0.05); }
+        .faq-question { width: 100%; background: none; border: none; outline: none; padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; color: white; font-size: 1.05rem; font-weight: 700; cursor: pointer; text-align: left; transition: 0.3s; }
+        .faq-icon { color: var(--accent-color); margin-right: 12px; font-size: 1.2rem; }
+        .arrow-icon { font-size: 1rem; color: #64748b; transition: transform 0.3s ease; }
+        .faq-item.active .arrow-icon { transform: rotate(180deg); color: var(--accent-color); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; background-color: rgba(255, 255, 255, 0.01); }
+        .faq-answer p { padding: 0 25px 20px 25px; margin: 0; color: #cbd5e1; font-size: 0.95rem; line-height: 1.6; }
+        
         @media (max-width: 768px) {
             .faq-title { font-size: 1.9rem; }
             .faq-question { padding: 15px 18px; font-size: 0.95rem; }
             .faq-answer p { padding: 0 18px 15px 18px; font-size: 0.88rem; }
         }
 
-        /* --- ESTILOS DEL PIE DE PÁGINA (FOOTER) --- */
-        footer {
-            background-color: var(--bg-dark);
-            border-top: 1px solid rgba(56, 189, 248, 0.1);
-            padding: 20px 5%;
-            text-align: center;
-            color: #64748b;
-            font-size: 0.9rem;
-            margin-top: 50px;
-        }
-        footer p {
-            margin: 0;
-        }
+        footer { background-color: var(--bg-dark); border-top: 1px solid rgba(56, 189, 248, 0.1); padding: 20px 5%; text-align: center; color: #64748b; font-size: 0.9rem; margin-top: 50px; }
+        footer p { margin: 0; }
     </style>
 </head>
 <body>
 
     <header>
-        <a href="/" class="logo-container">
+        <a href="/" class="logo-link">
             <img src="/img/logo.png" alt="SVO Logo" class="logo-img">
-            <span class="logo-text">Sistemas de Videovigilancia Orizaba</span>
+            <div class="logo-text">SISTEMAS DE<br>VIDEOVIGILANCIA<br>ORIZABA</div>
         </a>
         
         <button class="menu-toggle" id="menuToggle">
@@ -443,16 +414,16 @@
 
         <nav id="navbar">
             <ul>
-                <li><a href="/" style="color:var(--accent-color);">Inicio</a></li>
+                <li><a href="/" class="active">Inicio</a></li>
                 <li><a href="#servicios">Servicios</a></li>
                 <li><a href="/proyectos">Proyectos</a></li>
                 <li><a href="/catalogo">Catálogo</a></li>
                 <li><a href="#nosotros">Nosotros</a></li>
                 <li><a href="/cotizar">Cotizar</a></li>
                 <li>
-                    <a href="/carrito" class="cart-link">
+                    <a href="/carrito" class="cart-nav-link">
                         <i class="fas fa-shopping-cart"></i> Carrito 
-                        <span id="cart-count" class="cart-badge">0</span>
+                        <span class="cart-badge" id="cartBadge">0</span>
                     </a>
                 </li>
             </ul>
@@ -629,7 +600,7 @@
                     <i class="fas fa-chevron-down arrow-icon"></i>
                 </button>
                 <div class="faq-answer">
-                    <p><strong>Garantía de fábrica y soporte SVO.</strong> Todos nuestros equipos principales (cámaras y grabadores) cuentan con un año de garantía contra cualquier defecto de fábrica. Además, te respaldamos con soporte técnico post-venta para resolver cualquier duda con tu aplicación o el funcionamiento del sistema.</p>
+                    <p><strong>Garantía de fábrica y soporte SVO.</strong> Todos nuestros equipos principales (cámaras y grabadores) cuentan con un año de garantía contra cualquier defect de fábrica. Además, te respaldamos con soporte técnico post-venta para resolver cualquier duda con tu aplicación o el funcionamiento del sistema.</p>
                 </div>
             </div>
         </div>
@@ -653,10 +624,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
-        // --- CONTROL DE SWIPER CORREGIDO ---
+        // --- CONTROL DE SWIPER ---
         const swiper = new Swiper('.swiper', {
             loop: true,
-            autoHeight: true, /* Reactivado: obliga al contenedor a calcular la altura matemática exacta del banner */
+            autoHeight: true, 
             autoplay: {
                 delay: 4000,
                 disableOnInteraction: false,
@@ -705,6 +676,17 @@
                 }
             });
         });
+
+        // --- SINCRONIZACIÓN AUTOMÁTICA DEL CONTADOR DEL CARRITO ---
+        function actualizarContadorNav() {
+            const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+            const badge = document.getElementById('cartBadge');
+            const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+            if (badge) badge.innerText = totalItems;
+        }
+
+        // Inicializar el contador apenas cargue el Inicio
+        actualizarContadorNav();
     </script>
 </body>
 </html>
