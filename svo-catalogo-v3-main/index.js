@@ -149,6 +149,28 @@ app.post('/admin/actualizar/:id', upload.fields([{ name: 'imagen1' }, { name: 'i
 
 // --- SECCIÓN: PEDIDOS TIENDA EN LÍNEA ---
 
+// Ruta para recibir y procesar el pedido del carrito
+app.post('/api/pedidos', (req, res) => {
+    const { nombre, telefono, productos, total } = req.body;
+
+    if (!nombre || !telefono || !productos) {
+        return res.status(400).json({ success: false, message: "Faltan datos requeridos." });
+    }
+
+    // Convertimos a string por si el front manda un array/objeto
+    const productosString = typeof productos === 'string' ? productos : JSON.stringify(productos);
+
+    const query = `INSERT INTO pedidos (nombre, telefono, productos, total, estado) VALUES (?, ?, ?, ?, 'pendiente')`;
+
+    db.query(query, [nombre, telefono, productosString, total || 0], (err, result) => {
+        if (err) {
+            console.error('❌ Error al insertar pedido:', err.message);
+            return res.status(500).json({ success: false, message: "Error interno en el servidor." });
+        }
+        res.json({ success: true, message: "Pedido registrado con éxito.", pedidoId: result.insertId });
+    });
+});
+
 // Ruta para eliminar registros de pedidos
 app.get('/admin/eliminar-pedido/:id', (req, res) => {
     const { id } = req.params;
