@@ -149,8 +149,8 @@ app.post('/admin/actualizar/:id', upload.fields([{ name: 'imagen1' }, { name: 'i
 
 // --- SECCIÓN: PEDIDOS TIENDA EN LÍNEA ---
 
-// Ruta para recibir y procesar el pedido del carrito
-app.post('/api/pedidos', (req, res) => {
+// Ruta para recibir y procesar el pedido del carrito (Sincronizada con el /nuevo del front)
+app.post('/api/pedidos/nuevo', (req, res) => {
     const { nombre, telefono, productos, total } = req.body;
 
     if (!nombre || !telefono || !productos) {
