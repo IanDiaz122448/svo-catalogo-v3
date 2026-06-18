@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <link rel="stylesheet" href="/style.css">
-    
+   
     <style>
         :root {
             --accent-color: #00aeef; /* Azul vibrante unificado */
@@ -43,28 +43,28 @@
         nav ul li a.active, nav ul li a:hover { color: var(--accent-color); }
 
         /* Icono y Texto del Carrito en Menú */
-        .cart-nav-link { 
-            position: relative; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            color: #1f2937 !important; 
-            font-size: 0.85rem; 
+        .cart-nav-link {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1f2937 !important;
+            font-size: 0.85rem;
         }
-        .cart-badge { 
-            position: absolute; 
-            top: -12px; 
-            right: -14px; 
-            background: #ea4335; 
-            color: white; 
-            border-radius: 50%; 
-            width: 18px; 
-            height: 18px; 
-            font-size: 0.7rem; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-weight: bold; 
+        .cart-badge {
+            position: absolute;
+            top: -12px;
+            right: -14px;
+            background: #ea4335;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
         }
 
         /* --- BOTÓN HAMBURGUESA PARA RESPONSIVIDAD INTEGRADA --- */
@@ -80,8 +80,8 @@
 
         /* --- ESTILOS: AJUSTE EXACTO PARA BANNERS DE CANVA (850x400) --- */
         .promo-section {
-            padding: 0; 
-            background: transparent; 
+            padding: 0;
+            background: transparent;
             display: flex;
             justify-content: center;
             width: 100%;
@@ -96,7 +96,7 @@
             overflow: hidden;
             border: 1px solid rgba(56, 189, 248, 0.2);
             box-shadow: 0 15px 30px rgba(0,0,0,0.4);
-            background: transparent; 
+            background: transparent;
         }
 
         .swiper-slide {
@@ -111,29 +111,29 @@
             width: 100%;
             height: auto;      
             display: block;
-            object-fit: contain;   
+            object-fit: contain;  
         }
 
         /* --- ESTILOS DE LA SECCIÓN HERO --- */
         .hero-section {
-            background: radial-gradient(circle, #1e293b, #0f172a); 
-            min-height: 85vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            flex-direction: column; 
+            background: radial-gradient(circle, #1e293b, #0f172a);
+            min-height: 85vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
             text-align: center;
             padding: 180px 0 40px 0; /* Espacio para el header fijo */
         }
 
         .hero-content-container {
             width: 100%;
-            max-width: 1200px; 
+            max-width: 1200px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            align-items: center; 
-            gap: 30px; 
+            align-items: center;
+            gap: 30px;
         }
 
         /* --- NUEVOS ESTILOS: SECCIÓN DE NOVEDADES HORIZONTAL --- */
@@ -457,7 +457,7 @@
             }
             nav {
                 position: fixed;
-                top: 80px; 
+                top: 80px;
                 left: -100%;
                 width: 100%;
                 height: calc(100vh - 80px);
@@ -516,7 +516,7 @@
             <img src="/img/logo.png" alt="SVO Logo" class="logo-img">
             <div class="logo-text">SISTEMAS DE<br>VIDEOVIGILANCIA<br>ORIZABA</div>
         </a>
-        
+       
         <button class="menu-toggle" id="menuToggle">
             <i class="fas fa-bars"></i>
         </button>
@@ -573,7 +573,7 @@
 
             <div class="productos-destacados-container">
                 <div class="productos-destacados-grid">
-                    
+                   
                     <div class="producto-destacado-card">
                         <div class="badge-live">Ver Live</div>
                         <img src="https://images.unsplash.com/photo-1557862921-37829c790f19?q=80&w=400" alt="Termografía">
@@ -674,7 +674,7 @@
         <div style="text-align: center;">
             <h2>Sobre <span>Nosotros</span></h2>
         </div>
-        
+       
         <p class="presentation-text">
             Sistemas de Videovigilancia Orizaba es una empresa especializada en soluciones tecnológicas de seguridad, enfocada en la venta, instalación y mantenimiento de cámaras de videovigilancia de todas las marcas.
         </p>
@@ -783,7 +783,7 @@
         // --- CONTROL DE SWIPER ---
         const swiper = new Swiper('.swiper', {
             loop: true,
-            autoHeight: true, 
+            autoHeight: true,
             autoplay: {
                 delay: 4000,
                 disableOnInteraction: false,
@@ -812,37 +812,28 @@
             });
         }
 
-        // --- LÓGICA DEL ACORDEÓN DE PREGUNTAS FRECUENTES ---
-        document.querySelectorAll('.faq-question').forEach(button => {
-            button.addEventListener('click', () => {
-                const faqItem = button.parentElement;
-                const answer = faqItem.querySelector('.faq-answer');
+        // --- LOGICA DE ACORDEÓN PARA LAS FAQ ---
+        const faqQuestions = document.querySelectorAll('.faq-question');
+        faqQuestions.forEach(question => {
+            question.addEventListener('click', () => {
+                const item = question.parentElement;
+                const answer = item.querySelector('.faq-answer');
                 
-                if (faqItem.classList.contains('active')) {
-                    faqItem.classList.remove('active');
+                if (item.classList.contains('active')) {
                     answer.style.maxHeight = null;
+                    item.classList.remove('active');
                 } else {
-                    document.querySelectorAll('.faq-item').forEach(item => {
-                        item.classList.remove('active');
-                        item.querySelector('.faq-answer').style.maxHeight = null;
+                    // Cierra los otros por si acaso
+                    document.querySelectorAll('.faq-item').forEach(i => {
+                        i.classList.remove('active');
+                        i.querySelector('.faq-answer').style.maxHeight = null;
                     });
                     
-                    faqItem.classList.add('active');
+                    item.classList.add('active');
                     answer.style.maxHeight = answer.scrollHeight + "px";
                 }
             });
         });
-
-        // --- SINCRONIZACIÓN AUTOMÁTICA DEL CONTADOR DEL CARRITO ---
-        function actualizarContadorNav() {
-            const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-            const badge = document.getElementById('cartBadge');
-            const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
-            if (badge) badge.innerText = totalItems;
-        }
-
-        // Inicializar el contador apenas cargue el Inicio
-        actualizarContadorNav();
     </script>
 </body>
 </html>
