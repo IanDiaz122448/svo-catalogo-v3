@@ -422,5 +422,91 @@
         </table>
     </div>
 
+    <div class="form-card">
+        <h2><i class="fas fa-newspaper"></i> Nueva Novedad / Noticia</h2>
+        <form action="/admin/novedad" method="POST" enctype="multipart/form-data">
+            <div class="file-grid">
+                <div class="input-group">
+                    <label>Tipo de Etiqueta</label>
+                    <select name="tag_type" required>
+                        <option value="Live">En Vivo (Live)</option>
+                        <option value="Fecha">Fecha Actual</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Texto de la Etiqueta (Si eliges Fecha)</label>
+                    <input type="text" name="tag_text" placeholder="Ej: 15 Jun o Nuevo">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Título de la Novedad</label>
+                <input type="text" name="titulo" placeholder="Ej: Lanzamiento de Nueva APP Hik-Connect" required>
+            </div>
+
+            <div class="input-group">
+                <label>Descripción / Contenido Corto</label>
+                <textarea name="descripcion" rows="3" placeholder="Ej: Descubre las nuevas funciones de analítica avanzada que..." required></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Enlace de redirección (Ver más)</label>
+                <input type="text" name="link" placeholder="Ej: /blog/noticia-1 o un enlace de WhatsApp" required>
+            </div>
+
+            <div class="input-group">
+                <label>Imagen de Miniatura</label>
+                <input type="file" name="imagen_novedad" accept="image/*" required>
+                <div class="hint">Se recomienda formato tipo tarjeta/miniatura.</div>
+            </div>
+
+            <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, #a855f7, #7c3aed);">
+                <i class="fas fa-paper-plane"></i> PUBLICAR NOVEDAD
+            </button>
+        </form>
+    </div>
+
+    <div class="table-card">
+        <h2><i class="fas fa-sliders-h"></i> Gestionar Novedades</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Etiqueta</th>
+                    <th>Título</th>
+                    <th>Vista Previa</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (typeof novedades !== 'undefined' && novedades) { %>
+                    <% novedades.forEach(novedad => { %>
+                        <tr>
+                            <td>
+                                <span class="badge-status <%= novedad.tag_type === 'Live' ? 'status-pendiente' : 'status-proceso' %>">
+                                    <%= novelty.tag_type === 'Live' ? 'LIVE' : novedad.tag_text %>
+                                </span>
+                            </td>
+                            <td><%= novedad.titulo %></td>
+                            <td>
+                                <img src="<%= novedad.imagen_url %>" style="height: 40px; width: 60px; object-fit: cover; border-radius: 4px; border: 1px solid #334155;">
+                            </td>
+                            <td class="actions">
+                                <a href="/admin/eliminar-novedad/<%= novedad.id %>" 
+                                   class="btn-action btn-delete" 
+                                   onclick="return confirm('¿Seguro que quieres eliminar esta novedad?')">
+                                     <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: #64748b;">Asegúrate de pasar la variable "novedades" desde tu controlador de Express.</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+
 </body>
 </html>

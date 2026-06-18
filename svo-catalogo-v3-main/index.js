@@ -67,7 +67,7 @@ app.get('/catalogo', (req, res) => {
     });
 });
 
-// Panel de Admin (Muestra productos, promociones y pedidos)
+// Panel de Admin (Muestra productos, promociones, pedidos y novedades)
 app.get('/admin', (req, res) => {
     db.query('SELECT * FROM productos', (err, productos) => {
         if (err) return res.send("Error al cargar productos");
@@ -75,14 +75,19 @@ app.get('/admin', (req, res) => {
         db.query('SELECT * FROM promociones', (err, promociones) => {
             if (err) return res.send("Error al cargar promociones");
             
-            // Consultamos la tabla de pedidos para que admin.ejs no falle
             db.query('SELECT * FROM pedidos ORDER BY id DESC', (err, pedidos) => {
-                // Si la tabla aún no existe o falla, pasamos un array vacío para evitar caídas
                 const listaPedidos = err ? [] : pedidos;
-                res.render('admin', { 
-                    productos: productos, 
-                    promociones: promociones, 
-                    pedidos: listaPedidos 
+                
+                // === NUEVA CONSULTA PARA TRAER LAS NOVEDADES AL PANEL ===
+                db.query('SELECT * FROM novedades ORDER BY id DESC', (err, novedades) => {
+                    const listaNovedades = err ? [] : novedades;
+                    
+                    res.render('admin', { 
+                        productos: productos, 
+                        promociones: promociones, 
+                        pedidos: listaPedidos,
+                        novedades: listaNovedades // Enviada correctamente a admin.ejs
+                    });
                 });
             });
         });
@@ -93,12 +98,10 @@ app.get('/admin', (req, res) => {
 
 app.post('/admin/subir', upload.fields([{ name: 'imagen1' }, { name: 'imagen2' }]), (req, res) => {
     if (!req.body) return res.status(400).send("No se recibieron datos.");
-    // Extraemos precio y stock del req.body
     const { marca, titulo, subtitulo, modelo, caracteristicas, precio, stock } = req.body;
     const img1 = req.files['imagen1'] ? req.files['imagen1'][0].path : null;
     const img2 = req.files['imagen2'] ? req.files['imagen2'][0].path : null;
 
-    // Añadimos precio y stock al INSERT
     const query = `INSERT INTO productos 
                     (marca, titulo, subtitulo, modelo, caracteristicas, precio, stock, imagen1, imagen2) 
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
@@ -130,13 +133,11 @@ app.get('/admin/editar/:id', (req, res) => {
 
 app.post('/admin/actualizar/:id', upload.fields([{ name: 'imagen1' }, { name: 'imagen2' }]), (req, res) => {
     const { id } = req.params;
-    // Extraemos precio y stock para actualizar
     const { marca, titulo, subtitulo, modelo, caracteristicas, precio, stock } = req.body;
     
     const img1 = req.files['imagen1'] ? req.files['imagen1'][0].path : req.body.old_img1;
     const img2 = req.files['imagen2'] ? req.files['imagen2'][0].path : req.body.old_img2;
 
-    // Añadimos precio=? y stock=? al UPDATE
     const query = `UPDATE productos SET 
                     marca=?, titulo=?, subtitulo=?, modelo=?, caracteristicas=?, precio=?, stock=?, imagen1=?, imagen2=? 
                     WHERE id=?`;
@@ -149,7 +150,6 @@ app.post('/admin/actualizar/:id', upload.fields([{ name: 'imagen1' }, { name: 'i
 
 // --- SECCIÓN: PEDIDOS TIENDA EN LÍNEA ---
 
-// Ruta para recibir y procesar el pedido del carrito (Sincronizada con el /nuevo del front)
 app.post('/api/pedidos/nuevo', (req, res) => {
     const { nombre, telefono, productos, total } = req.body;
 
@@ -157,10 +157,7 @@ app.post('/api/pedidos/nuevo', (req, res) => {
         return res.status(400).json({ success: false, message: "Faltan datos requeridos." });
     }
 
-    // Convertimos a string por si el front manda un array/objeto
     const productosString = typeof productos === 'string' ? productos : JSON.stringify(productos);
-
-    // Corregido mapeando con las columnas reales: cliente_nombre, cliente_telefono, resumen_productos
     const query = `INSERT INTO pedidos (cliente_nombre, cliente_telefono, resumen_productos, total, estado) VALUES (?, ?, ?, ?, 'pendiente')`;
 
     db.query(query, [nombre, telefono, productosString, total || 0], (err, result) => {
@@ -172,7 +169,6 @@ app.post('/api/pedidos/nuevo', (req, res) => {
     });
 });
 
-// Ruta para eliminar registros de pedidos
 app.get('/admin/eliminar-pedido/:id', (req, res) => {
     const { id } = req.params;
     db.query('DELETE FROM pedidos WHERE id = ?', [id], (err, result) => {
@@ -181,7 +177,6 @@ app.get('/admin/eliminar-pedido/:id', (req, res) => {
     });
 });
 
-// Ruta para alternar o cambiar el estado del pedido (Pendiente -> Proceso -> Completado)
 app.get('/admin/pedido-estado/:id', (req, res) => {
     const { id } = req.params;
     
@@ -201,7 +196,6 @@ app.get('/admin/pedido-estado/:id', (req, res) => {
 
 // --- SECCIÓN DE PROMOCIONES ---
 
-// Subir banner de promoción
 app.post('/admin/promocion', upload.single('banner'), (req, res) => {
     const { titulo, link } = req.body;
     const imagen_url = req.file ? req.file.path : null;
@@ -218,7 +212,6 @@ app.post('/admin/promocion', upload.single('banner'), (req, res) => {
     });
 });
 
-// Eliminar banner de promoción
 app.get('/admin/eliminar-promocion/:id', (req, res) => {
     const { id } = req.params;
     db.query('DELETE FROM promociones WHERE id = ?', [id], (err, result) => {
@@ -226,6 +219,41 @@ app.get('/admin/eliminar-promocion/:id', (req, res) => {
         res.redirect('/admin');
     });
 });
+
+
+// =============================================
+// --- NUEVA SECCIÓN DE NOVEDADES / NOTICIAS ---
+// =============================================
+
+// Subir una novedad
+app.post('/admin/novedad', upload.single('imagen_novedad'), (req, res) => {
+    const { tag_type, tag_text, titulo, descripcion, link } = req.body;
+    const imagen_url = req.file ? req.file.path : null;
+
+    if (!imagen_url) return res.status(400).send("Debe subir una imagen para la novedad.");
+
+    // Guardará 'Live' o el texto manual de la fecha dependiendo de la selección
+    const textoEtiqueta = tag_type === 'Live' ? 'Live' : tag_text;
+
+    const query = 'INSERT INTO novedades (tag_type, tag_text, titulo, descripcion, link, imagen_url) VALUES (?, ?, ?, ?, ?, ?)';
+    db.query(query, [tag_type, textoEtiqueta, titulo, descripcion, link, imagen_url], (err, result) => {
+        if (err) {
+            console.error('❌ Error al guardar novedad:', err.message);
+            return res.status(500).send("Error al guardar novedad en la base de datos.");
+        }
+        res.redirect('/admin');
+    });
+});
+
+// Eliminar una novedad
+app.get('/admin/eliminar-novedad/:id', (req, res) => {
+    const { id } = req.params;
+    db.query('DELETE FROM novedades WHERE id = ?', [id], (err, result) => {
+        if (err) return res.status(500).send("Error al eliminar la novedad.");
+        res.redirect('/admin');
+    });
+});
+
 
 // --- 5. PUERTO DINÁMICO PARA RENDER ---
 const PORT = process.env.PORT || 3000;

@@ -50,9 +50,9 @@
             <img src="/img/logo.png" alt="SVO Logo" class="logo-img">
             <div class="logo-text">SISTEMAS DE<br>VIDEOVIGILANCIA<br>ORIZABA</div>
         </a>
-      <nav id="navbar">
+        <nav id="navbar">
             <ul>
-                <li><a href="/" class="active">Inicio</a></li>
+                <li><a href="/">Inicio</a></li>
                 <li><a href="#servicios">Servicios</a></li>
                 <li><a href="/proyectos">Proyectos</a></li>
                 <li><a href="/catalogo">Catálogo</a></li>
@@ -103,9 +103,18 @@
     <script>
         let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
 
+        function actualizarBadge() {
+            const badge = document.getElementById('cartBadge');
+            if (badge) {
+                const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+                badge.innerText = totalItems;
+            }
+        }
+
         function renderCarrito() {
             const container = document.getElementById('itemsContainer');
             const totalText = document.getElementById('cartTotal');
+            actualizarBadge();
             
             if (carrito.length === 0) {
                 document.getElementById('cartGrid').innerHTML = `
@@ -128,7 +137,7 @@
                         <div class="item-details">
                             <h4>${item.titulo}</h4>
                             <p>Modelo: ${item.modelo}</p>
-                            <p style="color: #eab308; font-weight: bold; margin-top: 4px;">$${item.precio.toLocaleString('es-MX')} MXN</p>
+                            <p style="color: #eab308; font-weight: bold; margin-top: 4px;">$${Number(item.precio).toLocaleString('es-MX')} MXN</p>
                         </div>
                         <div class="qty-controls">
                             <button class="qty-btn" onclick="cambiarCantidad(${index}, -1)">-</button>
@@ -157,27 +166,33 @@
             renderCarrito();
         }
 
-        // Procesar pedido enviándolo a Base de datos y abriendo WhatsApp
         document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const nombre = document.getElementById('clientName').value;
-            const telefono = document.getElementById('clientPhone').value;
+            const nombre = document.getElementById('clientName').value.trim();
+            const telefono = document.getElementById('clientPhone').value.trim();
             
-            // 1. Construimos el detalle de los productos para la base de datos
+            // Generamos la cadena limpia de texto para guardar en la columna 'resumen_productos'
             const productosDetalle = carrito.map(i => `${i.cantidad}x ${i.titulo} (${i.modelo})`).join(', ');
             const total = carrito.reduce((sum, i) => sum + (i.precio * i.cantidad), 0);
 
             try {
-                // 2. Hacer POST a nuestro servidor Express para guardarlo en la base de datos de admin
+                // Forzamos la ruta absoluta desde la raíz del dominio para evitar el error 404 en Render
                 const response = await fetch('/api/pedidos/nuevo', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nombre, telefono, productos: productosDetalle, total })
+                    body: JSON.stringify({ 
+                        nombre: nombre, 
+                        telefono: telefono, 
+                        productos: productosDetalle, 
+                        total: total 
+                    })
                 });
 
-                if (response.ok) {
-                    // 3. Si se guardó con éxito en el panel, armar el mensaje de confirmación de WhatsApp
+                const resultado = await response.json();
+
+                if (response.ok && resultado.success) {
+                    // Generación del mensaje para WhatsApp
                     let mensajeWa = `Hola SVO Orizaba, me interesa concretar la compra del siguiente pedido:\n\n`;
                     mensajeWa += `👤 *Cliente:* ${nombre}\n`;
                     mensajeWa += `📞 *Teléfono:* ${telefono}\n\n`;
@@ -189,24 +204,25 @@
                     
                     mensajeWa += `\n💰 *Total Neto:* $${total.toLocaleString('es-MX')} MXN`;
                     
-                    // Limpiar carrito local
+                    // Limpieza del almacenamiento local
                     localStorage.removeItem('carrito');
 
-                    // Redirigir al WhatsApp de la empresa
+                    // Apertura de WhatsApp en pestaña nueva
                     const urlWa = `https://wa.me/522721569109?text=${encodeURIComponent(mensajeWa)}`;
                     window.open(urlWa, '_blank');
                     
-                    // Recargar pantalla
+                    // Redirección limpia
                     window.location.href = '/catalogo';
                 } else {
-                    alert("❌ Ocurrió un problema al procesar el pedido en el servidor.");
+                    alert("❌ Error del servidor: " + (resultado.message || "No se pudo registrar el pedido."));
                 }
             } catch (error) {
-                console.error(error);
-                alert("❌ Error de red al enviar el pedido.");
+                console.error("❌ Error en la petición Fetch:", error);
+                alert("❌ Ocurrió un error de red al intentar enviar tu pedido.");
             }
         });
 
+        // Carga inicial
         renderCarrito();
     </script>
 </body>
