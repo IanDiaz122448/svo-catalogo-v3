@@ -756,7 +756,7 @@
                     <i class="fas fa-chevron-down arrow-icon"></i>
                 </button>
                 <div class="faq-answer">
-                    <p><strong>Garantía de fábrica y soporte SVO.</strong> Todos nuestros equipos principales (cámaras y grabadores) cuentan con un año de garantía contra cualquier defect de fábrica. Además, te respaldamos con soporte técnico post-venta para resolver cualquier duda con tu aplicación o el funcionamiento del sistema.</p>
+                    <p><strong>Garantía de fábrica y soporte SVO.</strong> Todos nuestros equipos principales (cámaras y grabadores) cuentan con un año de garantía contra cualquier defecto de fábrica. Además, te respaldamos con soporte técnico post-venta para resolver cualquier duda con tu aplicación o el funcionamiento del sistema.</p>
                 </div>
             </div>
         </div>
@@ -812,25 +812,26 @@
             });
         }
 
-        // --- LOGICA DE ACORDEÓN PARA LAS FAQ ---
+        // --- MANEJO DEL ACCORDEÓN DE FAQ ---
         const faqQuestions = document.querySelectorAll('.faq-question');
         faqQuestions.forEach(question => {
             question.addEventListener('click', () => {
                 const item = question.parentElement;
-                const answer = item.querySelector('.faq-answer');
+                const answer = question.nextElementSibling;
                 
-                if (item.classList.contains('active')) {
-                    answer.style.maxHeight = null;
-                    item.classList.remove('active');
-                } else {
-                    // Cierra los otros por si acaso
-                    document.querySelectorAll('.faq-item').forEach(i => {
+                // Cierra otros abiertos (opcional, si quieres comportamiento de acordeón estricto)
+                document.querySelectorAll('.faq-item').forEach(i => {
+                    if (i !== item && i.classList.contains('active')) {
                         i.classList.remove('active');
                         i.querySelector('.faq-answer').style.maxHeight = null;
-                    });
-                    
-                    item.classList.add('active');
+                    }
+                });
+
+                item.classList.toggle('active');
+                if (item.classList.contains('active')) {
                     answer.style.maxHeight = answer.scrollHeight + "px";
+                } else {
+                    answer.style.maxHeight = null;
                 }
             });
         });
