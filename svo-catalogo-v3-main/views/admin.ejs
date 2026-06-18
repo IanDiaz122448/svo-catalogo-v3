@@ -211,23 +211,25 @@
                 </tr>
             </thead>
             <tbody>
-                <% productos.forEach(producto => { %>
-                    <tr>
-                        <td><%= producto.modelo %></td>
-                        <td><%= producto.titulo %></td>
-                        <td><%= producto.marca %></td>
-                        <td class="actions">
-                            <a href="/admin/editar/<%= producto.id %>" class="btn-action btn-edit">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <a href="/admin/eliminar/<%= producto.id %>" 
-                               class="btn-action btn-delete" 
-                               onclick="return confirm('¿Seguro que quieres eliminar este producto?')">
-                                 <i class="fas fa-trash"></i>
-                            </a>
-                        </td>
-                    </tr>
-                <% }) %>
+                <% if (typeof productos !== 'undefined' && productos) { %>
+                    <% productos.forEach(producto => { %>
+                        <tr>
+                            <td><%= producto.modelo %></td>
+                            <td><%= producto.titulo %></td>
+                            <td><%= producto.marca %></td>
+                            <td class="actions">
+                                <a href="/admin/editar/<%= producto.id %>" class="btn-action btn-edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="/admin/eliminar/<%= producto.id %>" 
+                                   class="btn-action btn-danger" 
+                                   onclick="return confirm('¿Seguro que quieres eliminar este producto?')">
+                                     <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } %>
             </tbody>
         </table>
     </div>
@@ -245,7 +247,7 @@
                 </tr>
             </thead>
             <tbody>
-                <% if (typeof pedidos !== 'undefined' && pedidos) { %>
+                <% if (typeof pedidos !== 'undefined' && pedidos && pedidos.length > 0) { %>
                     <% pedidos.forEach(pedido => { %>
                         <tr>
                             <td>
@@ -281,7 +283,7 @@
                     <% }) %>
                 <% } else { %>
                     <tr>
-                        <td colspan="5" style="text-align: center; color: #64748b;">La tabla de pedidos estará activa cuando conectes la base de datos de compras.</td>
+                        <td colspan="5" style="text-align: center; color: #64748b;">No hay pedidos registrados en la base de datos actualmente.</td>
                     </tr>
                 <% } %>
             </tbody>
@@ -345,7 +347,7 @@
                 </tr>
             </thead>
             <tbody>
-                <% if (typeof proyectos !== 'undefined' && proyectos) { %>
+                <% if (typeof proyectos !== 'undefined' && proyectos && proyectos.length > 0) { %>
                     <% proyectos.forEach(proyecto => { %>
                         <tr>
                             <td><span style="color: var(--accent-color); font-weight: bold;"><%= proyecto.badge %></span></td>
@@ -361,7 +363,7 @@
                     <% }) %>
                 <% } else { %>
                     <tr>
-                        <td colspan="3" style="text-align: center; color: #64748b;">El backend aún no está enviando la lista de proyectos activos.</td>
+                        <td colspan="3" style="text-align: center; color: #64748b;">No hay proyectos activos en el portafolio actualmente.</td>
                     </tr>
                 <% } %>
             </tbody>
@@ -402,22 +404,24 @@
                 </tr>
             </thead>
             <tbody>
-                <% promociones.forEach(promo => { %>
-                    <tr>
-                        <td><%= promo.id %></td>
-                        <td><%= promo.titulo %></td>
-                        <td>
-                            <img src="<%= promo.imagen_url %>" style="height: 40px; border-radius: 4px; border: 1px solid #334155;">
-                        </td>
-                        <td class="actions">
-                            <a href="/admin/eliminar-promocion/<%= promo.id %>" 
-                               class="btn-action btn-delete" 
-                               onclick="return confirm('¿Eliminar este banner de promoción?')">
-                                 <i class="fas fa-trash"></i>
-                            </a>
-                        </td>
-                    </tr>
-                <% }) %>
+                <% if (typeof promociones !== 'undefined' && promociones) { %>
+                    <% promociones.forEach(promo => { %>
+                        <tr>
+                            <td><%= promo.id %></td>
+                            <td><%= promo.titulo %></td>
+                            <td>
+                                <img src="<%= promo.imagen_url %>" style="height: 40px; border-radius: 4px; border: 1px solid #334155;">
+                            </td>
+                            <td class="actions">
+                                <a href="/admin/eliminar-promocion/<%= promo.id %>" 
+                                   class="btn-action btn-delete" 
+                                   onclick="return confirm('¿Eliminar este banner de promoción?')">
+                                     <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } %>
             </tbody>
         </table>
     </div>
@@ -478,7 +482,7 @@
                 </tr>
             </thead>
             <tbody>
-                <% if (typeof novedades !== 'undefined' && novedades) { %>
+                <% if (typeof novedades !== 'undefined' && novedades && novedades.length > 0) { %>
                     <% novedades.forEach(novedad => { %>
                         <tr>
                             <td>
@@ -501,7 +505,7 @@
                     <% }) %>
                 <% } else { %>
                     <tr>
-                        <td colspan="4" style="text-align: center; color: #64748b;">Asegúrate de pasar la variable "novedades" desde tu controlador de Express.</td>
+                        <td colspan="4" style="text-align: center; color: #64748b;">No hay novedades guardadas actualmente.</td>
                     </tr>
                 <% } %>
             </tbody>
