@@ -27,8 +27,32 @@ const db = mysql.createConnection({
 });
 
 db.connect((err) => {
-    if (err) console.error('❌ Error DB:', err.message);
-    else console.log('✅ Conexión establecida correctamente');
+    if (err) {
+        console.error('❌ Error DB:', err.message);
+    } else {
+        console.log('✅ Conexión establecida correctamente');
+        
+        // --- CREACIÓN AUTOMÁTICA DE LA TABLA NOVEDADES (POR SI NO EXISTE) ---
+        const sqlCrearNovedades = `
+        CREATE TABLE IF NOT EXISTS novedades (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            tag_type VARCHAR(20) NOT NULL,
+            tag_text VARCHAR(50),
+            titulo VARCHAR(255) NOT NULL,
+            descripcion TEXT NOT NULL,
+            link VARCHAR(255) NOT NULL,
+            imagen_url VARCHAR(255) NOT NULL,
+            fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );`;
+
+        db.query(sqlCrearNovedades, (errTable, result) => {
+            if (errTable) {
+                console.error('❌ Error al verificar/crear la tabla novedades:', errTable.message);
+            } else {
+                console.log('📦 Tabla "novedades" verificada/creada correctamente en la BD.');
+            }
+        });
+    }
 });
 
 // --- 4. RUTAS ---
