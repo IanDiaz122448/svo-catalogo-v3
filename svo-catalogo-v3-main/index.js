@@ -160,7 +160,8 @@ app.post('/api/pedidos/nuevo', (req, res) => {
     // Convertimos a string por si el front manda un array/objeto
     const productosString = typeof productos === 'string' ? productos : JSON.stringify(productos);
 
-    const query = `INSERT INTO pedidos (nombre, telefono, productos, total, estado) VALUES (?, ?, ?, ?, 'pendiente')`;
+    // Corregido mapeando con las columnas reales: cliente_nombre, cliente_telefono, resumen_productos
+    const query = `INSERT INTO pedidos (cliente_nombre, cliente_telefono, resumen_productos, total, estado) VALUES (?, ?, ?, ?, 'pendiente')`;
 
     db.query(query, [nombre, telefono, productosString, total || 0], (err, result) => {
         if (err) {
