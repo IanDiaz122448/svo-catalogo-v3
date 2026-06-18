@@ -136,6 +136,114 @@
             gap: 30px; 
         }
 
+        /* --- NUEVOS ESTILOS: SECCIÓN DE NOVEDADES HORIZONTAL --- */
+        .productos-destacados-container {
+            width: 100%;
+            max-width: 1100px;
+            margin: 40px auto 10px auto;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        .productos-destacados-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 15px;
+            width: 100%;
+        }
+
+        .producto-destacado-card {
+            background-color: #0b132b;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .producto-destacado-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .producto-destacado-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            filter: brightness(0.85);
+            display: block;
+        }
+
+        .card-destacado-content {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            justify-content: space-between;
+        }
+
+        .card-destacado-content h3 {
+            color: #ffffff;
+            font-size: 1rem;
+            margin: 0 0 6px 0;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .card-destacado-content p {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin: 0 0 15px 0;
+            line-height: 1.4;
+        }
+
+        .btn-ver-producto {
+            background-color: #2b6cb0;
+            color: #ffffff;
+            text-align: center;
+            padding: 8px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: background-color 0.2s;
+            margin-top: auto;
+            text-transform: uppercase;
+        }
+
+        .btn-ver-producto:hover {
+            background-color: #3182ce;
+            color: #ffffff;
+        }
+
+        .badge-live {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background-color: #e53e3e;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            z-index: 10;
+        }
+
+        .badge-date {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background-color: #2b6cb0;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            z-index: 10;
+        }
+
         /* --- SECCIÓN SERVICIOS --- */
         #servicios {
             background: var(--bg-dark);
@@ -374,6 +482,7 @@
             .mission-vision-container, .values-grid { grid-template-columns: 1fr; }
             .promo-section, .swiper, .swiper-slide, .swiper-slide img { height: auto; }
             .hero-section { padding-top: 160px; }
+            .productos-destacados-grid { grid-template-columns: 1fr; }
         }
 
         /* --- FAQ SECTION --- */
@@ -422,7 +531,7 @@
                 <li><a href="/cotizar">Cotizar</a></li>
                 <li>
                     <a href="/carrito" class="cart-nav-link">
-                        <i class="fas fa-shopping-cart"></i>
+                        <i class="fas fa-shopping-cart"></i> Carrito
                         <span class="cart-badge" id="cartBadge">0</span>
                     </a>
                 </li>
@@ -453,14 +562,61 @@
             </div>
             <% } %>
 
-            <div style="text-align: center;">
+            <div style="text-align: center; width: 100%;">
                 <h1>Seguridad que <span>puedes ver</span></h1>
                 <p style="font-size: 1.2rem; color: #94a3b8; margin-bottom: 40px; max-width: 700px; margin-left: auto; margin-right: auto;">Expertos en venta, instalación y mantenimiento de cámaras en Orizaba y la región.</p>
-                <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+                <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px;">
                     <a href="/cotizar" class="btn">Cotizar Proyecto</a>
                     <a href="/catalogo" class="btn btn-outline">Ver Marcas</a>
                 </div>
             </div>
+
+            <div class="productos-destacados-container">
+                <div class="productos-destacados-grid">
+                    
+                    <div class="producto-destacado-card">
+                        <div class="badge-live">Ver Live</div>
+                        <img src="https://images.unsplash.com/photo-1557862921-37829c790f19?q=80&w=400" alt="Termografía">
+                        <div class="card-destacado-content">
+                            <h3>Hikmicro-Termografía Sin...</h3>
+                            <p>Termografía Sin complicaciones</p>
+                            <a href="/catalogo" class="btn-ver-producto">Ver producto</a>
+                        </div>
+                    </div>
+
+                    <div class="producto-destacado-card">
+                        <div class="badge-date">23 jul - 10:00</div>
+                        <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=400" alt="Inversores">
+                        <div class="card-destacado-content">
+                            <h3>Inversores de Onda Modificada...</h3>
+                            <p>Trabajo pesado e intermitente</p>
+                            <a href="/catalogo" class="btn-ver-producto">Ver producto</a>
+                        </div>
+                    </div>
+
+                    <div class="producto-destacado-card">
+                        <div class="badge-date">13 ago - 10:00</div>
+                        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=400" alt="Redes">
+                        <div class="card-destacado-content">
+                            <h3>¿Deja de crear varios SSID?</h3>
+                            <p>Modelos Route10 y AP6</p>
+                            <a href="/catalogo" class="btn-ver-producto">Ver producto</a>
+                        </div>
+                    </div>
+
+                    <div class="producto-destacado-card">
+                        <div class="badge-date">10 sep - 10:00</div>
+                        <img src="https://images.unsplash.com/photo-1563770660941-20978e870e26?q=80&w=400" alt="Cerraduras">
+                        <div class="card-destacado-content">
+                            <h3>¿Cómo modificar el código?</h3>
+                            <p>Maestro de tu cerradura</p>
+                            <a href="/catalogo" class="btn-ver-producto">Ver producto</a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
     </section>
 
