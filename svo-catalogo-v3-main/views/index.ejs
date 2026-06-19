@@ -579,15 +579,15 @@
                     <% if (typeof novedades !== 'undefined' && novedades.length > 0) { %>
                         <% novedades.forEach(item => { %>
                             <div class="producto-destacado-card">
-                                <% if (item.badge) { %>
-                                    <div class="<%= item.badge_tipo === 'live' ? 'badge-live' : 'badge-date' %>">
-                                        <%= item.badge %>
+                                <% if (item.tag_text) { %>
+                                    <div class="<%= item.tag_type === 'Live' ? 'badge-live' : 'badge-date' %>">
+                                        <%= item.tag_text %>
                                     </div>
                                 <% } %>
                                 
-                                <% if (typeof item.tipo !== 'undefined' && item.tipo === 'video') { %>
-                                    <video controls playsinline poster="<%= item.imagen_url %>">
-                                        <source src="<%= item.archivo_url %>" type="video/mp4">
+                                <% if (item.imagen_url && (item.imagen_url.includes('.mp4') || item.imagen_url.includes('.mov') || item.imagen_url.includes('/video/upload/'))) { %>
+                                    <video controls playsinline>
+                                        <source src="<%= item.imagen_url %>" type="video/mp4">
                                         Tu navegador no soporta reproducción de video.
                                     </video>
                                 <% } else { %>
@@ -597,7 +597,7 @@
                                 <div class="card-destacado-content">
                                     <h3><%= item.titulo %></h3>
                                     <p><%= item.descripcion %></p>
-                                    <a href="<%= item.enlace || '/catalogo' %>" class="btn-ver-producto">Ver más</a>
+                                    <a href="<%= item.link || '/catalogo' %>" class="btn-ver-producto">Ver más</a>
                                 </div>
                             </div>
                         <% }) %>
@@ -812,7 +812,6 @@
                 const item = question.parentElement;
                 const answer = item.querySelector('.faq-answer');
                 
-                // Cierra otros elementos abiertos por comodidad visual
                 document.querySelectorAll('.faq-item').forEach(otherItem => {
                     if (otherItem !== item && otherItem.classList.contains('active')) {
                         otherItem.classList.remove('active');
@@ -820,7 +819,6 @@
                     }
                 });
 
-                // Alternar estado actual
                 if (item.classList.contains('active')) {
                     item.classList.remove('active');
                     answer.style.maxHeight = null;

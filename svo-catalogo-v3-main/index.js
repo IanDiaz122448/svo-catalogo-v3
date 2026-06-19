@@ -57,14 +57,15 @@ db.connect((err) => {
 
 // --- 4. RUTAS ---
 
-// Inicio (Ahora carga los banners de promociones)
+// Inicio (Ahora carga los banners de promociones Y las novedades)
 app.get('/', (req, res) => {
-    db.query('SELECT * FROM promociones ORDER BY fecha_creacion DESC', (err, rows) => {
-        if (err) {
-            console.error('❌ Error al cargar promociones:', err.message);
-            return res.render('index', { banners: [] });
-        }
-        res.render('index', { banners: rows });
+    db.query('SELECT * FROM promociones ORDER BY fecha_creacion DESC', (err, banners) => {
+        if (err) banners = [];
+        
+        db.query('SELECT * FROM novedades ORDER BY id DESC', (err, novedades) => {
+            if (err) novedades = [];
+            res.render('index', { banners, novedades });
+        });
     });
 });
 
