@@ -26,6 +26,41 @@
             padding: 20px; 
         }
 
+        /* --- NUEVOS ESTILOS PARA LAS PESTAÑAS (TABS) --- */
+        .admin-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        .tab-btn {
+            background: #334155;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .tab-btn:hover { background: #475569; }
+        .tab-btn.active { background: var(--accent-color); color: var(--bg-dark); }
+        
+        .admin-section {
+            width: 100%;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+        .admin-section.active { display: flex; }
+        /* ---------------------------------------------- */
+
         .form-card, .table-card { 
             background: var(--card-bg); 
             padding: 40px; 
@@ -129,388 +164,423 @@
 </head>
 <body>
 
-    <div class="form-card">
-        <h2><i class="fas fa-plus-circle"></i> Nuevo Producto SVO</h2>
-        
-        <form action="/admin/subir" method="POST" enctype="multipart/form-data">
-            <div class="input-group">
-                <label>Seleccionar Marca</label>
-                <select name="marca" required>
-                    <option value="Hikvision">Hikvision</option>
-                    <option value="HiLook">HiLook</option>
-                    <option value="Dahua">Dahua</option>
-                    <option value="Ezviz">Ezviz</option>
-                    <option value="Imou">Imou</option>
-                    <option value="Uniview">Uniview</option>
-                    <option value="Honeywell">Honeywell</option>
-                    <option value="ZKTeco">ZKTeco</option>
-                    <option value="Logitech">Logitech</option>
-                    <option value="Axis">Axis</option>
-                    <option value="Bosch">Bosch</option>
-                    <option value="Epcom">Epcom</option>
-                    <option value="TPlink">TPlink</option>
-                </select>
-            </div>
-
-            <div class="input-group">
-                <label>Título del Kit / Producto</label>
-                <input type="text" name="titulo" placeholder="Ej: Kit ColorVu TurboHD 1080p" required>
-            </div>
-
-            <div class="input-group">
-                <label>Detalles Rápidos (Debajo del título)</label>
-                <input type="text" name="subtitulo" placeholder="Ej: DVR 4 Canales • 4 Cámaras • Accesorios" required>
-            </div>
-
-            <div class="file-grid">
-                <div class="input-group">
-                    <label>Precio de Venta ($ MXN)</label>
-                    <input type="number" name="precio" placeholder="Ej: 2999" min="0" required>
-                </div>
-                <div class="input-group">
-                    <label>Stock / Disponibilidad Inicial</label>
-                    <input type="number" name="stock" placeholder="Ej: 10" min="0" required>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label>Modelo de Serie</label>
-                <input type="text" name="modelo" placeholder="Ej: KH1080P4BC" required>
-            </div>
-
-            <div class="input-group">
-                <label>Características (Una por cada línea)</label>
-                <textarea name="caracteristicas" rows="5" placeholder="Cámaras con visión a color 24/7&#10;Visualización remota Hik-Connect&#10;Incluye instalación básica" required></textarea>
-                <div class="hint">Cada salto de línea se convertirá en un punto de la lista.</div>
-            </div>
-
-            <div class="file-grid">
-                <div class="input-group">
-                    <label>Imagen Principal</label>
-                    <input type="file" name="imagen1" accept="image/*" required>
-                </div>
-                <div class="input-group">
-                    <label>Imagen Detalle</label>
-                    <input type="file" name="imagen2" accept="image/*" required>
-                </div>
-            </div>
-
-            <button type="submit" class="btn-submit"><i class="fas fa-cloud-upload-alt"></i> PUBLICAR EN CATÁLOGO</button>
-        </form>
+    <div class="admin-nav">
+        <button class="tab-btn active" onclick="showSection('seccion-productos', this)">Productos</button>
+        <button class="tab-btn" onclick="showSection('seccion-pedidos', this)">Pedidos</button>
+        <button class="tab-btn" onclick="showSection('seccion-proyectos', this)">Proyectos</button>
+        <button class="tab-btn" onclick="showSection('seccion-banners', this)">Banners</button>
+        <button class="tab-btn" onclick="showSection('seccion-novedades', this)">Novedades</button>
     </div>
 
-    <div class="table-card">
-        <h2><i class="fas fa-tasks"></i> Gestionar Catálogo</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Modelo</th>
-                    <th>Título</th>
-                    <th>Marca</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% if (typeof productos !== 'undefined' && productos) { %>
-                    <% productos.forEach(producto => { %>
-                        <tr>
-                            <td><%= producto.modelo %></td>
-                            <td><%= producto.titulo %></td>
-                            <td><%= producto.marca %></td>
-                            <td class="actions">
-                                <a href="/admin/editar/<%= producto.id %>" class="btn-action btn-edit">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a href="/admin/eliminar/<%= producto.id %>" 
-                                   class="btn-action btn-danger" 
-                                   onclick="return confirm('¿Seguro que quieres eliminar este producto?')">
-                                     <i class="fas fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    <% }) %>
-                <% } %>
-            </tbody>
-        </table>
-    </div>
-
-    <div class="table-card">
-        <h2><i class="fas fa-shopping-cart"></i> Pedidos Recibidos (Tienda en Línea)</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Cliente / Contacto</th>
-                    <th>Productos Solicitados</th>
-                    <th>Total</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% if (typeof pedidos !== 'undefined' && pedidos && pedidos.length > 0) { %>
-                    <% pedidos.forEach(pedido => { %>
-                        <tr>
-                            <td>
-                                <strong><%= pedido.cliente_nombre %></strong><br>
-                                <span style="font-size: 0.8rem; color: #94a3b8;"><%= pedido.cliente_telefono %></span>
-                            </td>
-                            <td>
-                                <span style="font-size: 0.85rem;"><%= pedido.resumen_productos %></span>
-                            </td>
-                            <td style="font-weight: bold; color: var(--accent-color);">
-                                $<%= pedido.total %> MXN
-                            </td>
-                            <td>
-                                <% if(pedido.estado === 'pendiente') { %>
-                                    <span class="badge-status status-pendiente">Pendiente</span>
-                                <% } else if(pedido.estado === 'proceso') { %>
-                                    <span class="badge-status status-proceso">En camino</span>
-                                <% } else { %>
-                                    <span class="badge-status status-completado">Entregado</span>
-                                <% } %>
-                            </td>
-                            <td class="actions">
-                                <a href="/admin/pedido-estado/<%= pedido.id %>" class="btn-action btn-edit" title="Actualizar Estado">
-                                    <i class="fas fa-sync-alt"></i>
-                                </a>
-                                <a href="/admin/eliminar-pedido/<%= pedido.id %>" 
-                                   class="btn-action btn-delete" 
-                                   onclick="return confirm('¿Eliminar registro de pedido?')">
-                                     <i class="fas fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    <% }) %>
-                <% } else { %>
-                    <tr>
-                        <td colspan="5" style="text-align: center; color: #64748b;">No hay pedidos registrados en la base de datos actualmente.</td>
-                    </tr>
-                <% } %>
-            </tbody>
-        </table>
-    </div>
-
-    <div class="form-card">
-        <h2><i class="fas fa-folder-plus"></i> Nuevo Proyecto Destacado</h2>
-        
-        <form action="/admin/proyecto" method="POST" enctype="multipart/form-data">
-            <div class="input-group">
-                <label>Categoría del Proyecto</label>
-                <select name="badge" required>
-                    <option value="Comercial">Comercial</option>
-                    <option value="Residencial">Residencial</option>
-                    <option value="Infraestructura">Infraestructura</option>
-                    <option value="Industrial">Industrial</option>
-                </select>
-            </div>
-
-            <div class="input-group">
-                <label>Nombre / Título del Proyecto</label>
-                <input type="text" name="titulo" placeholder="Ej: Seguridad Perimetral Hogar" required>
-            </div>
-
-            <div class="input-group">
-                <label>Descripción del Caso de Éxito</label>
-                <textarea name="descripcion" rows="4" placeholder="Ej: Implementación de cámaras con tecnología de visión nocturna a color..." required></textarea>
-            </div>
-
-            <div class="file-grid">
+    <div id="seccion-productos" class="admin-section active">
+        <div class="form-card">
+            <h2><i class="fas fa-plus-circle"></i> Nuevo Producto SVO</h2>
+            
+            <form action="/admin/subir" method="POST" enctype="multipart/form-data">
                 <div class="input-group">
-                    <label>Etiqueta Técnica 1</label>
-                    <input type="text" name="tag1" placeholder="Ej: 4 Cámaras" required>
-                </div>
-                <div class="input-group">
-                    <label>Etiqueta Técnica 2</label>
-                    <input type="text" name="tag2" placeholder="Ej: Exterior" required>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label>Imagen de la Instalación Realizada</label>
-                <input type="file" name="imagen_proyecto" accept="image/*" required>
-            </div>
-
-            <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, #38bdf8, #0284c7);">
-                <i class="fas fa-cloud-upload-alt"></i> PUBLICAR EN PORTAFOLIO
-            </button>
-        </form>
-    </div>
-
-    <div class="table-card">
-        <h2><i class="fas fa-briefcase"></i> Gestionar Portafolio</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Categoría</th>
-                    <th>Título del Proyecto</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% if (typeof proyectos !== 'undefined' && proyectos && proyectos.length > 0) { %>
-                    <% proyectos.forEach(proyecto => { %>
-                        <tr>
-                            <td><span style="color: var(--accent-color); font-weight: bold;"><%= proyecto.badge %></span></td>
-                            <td><%= proyecto.titulo %></td>
-                            <td class="actions">
-                                <a href="/admin/eliminar-proyecto/<%= proyecto.id %>" 
-                                   class="btn-action btn-delete" 
-                                   onclick="return confirm('¿Seguro que quieres eliminar este proyecto?')">
-                                     <i class="fas fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    <% }) %>
-                <% } else { %>
-                    <tr>
-                        <td colspan="3" style="text-align: center; color: #64748b;">No hay proyectos activos en el portafolio actualmente.</td>
-                    </tr>
-                <% } %>
-            </tbody>
-        </table>
-    </div>
-
-    <div class="form-card">
-        <h2><i class="fas fa-ad"></i> Nueva Promoción (Canva)</h2>
-        <form action="/admin/promocion" method="POST" enctype="multipart/form-data">
-            <div class="input-group">
-                <label>Título de la Promo</label>
-                <input type="text" name="titulo" placeholder="Ej: Especial Buen Fin" required>
-            </div>
-            <div class="input-group">
-                <label>Link de WhatsApp (Opcional)</label>
-                <input type="text" name="link" placeholder="https://wa.me/...">
-            </div>
-            <div class="input-group">
-                <label>Diseño de Canva (Banner)</label>
-                <input type="file" name="banner" accept="image/*" required>
-                <div class="hint">Se recomienda formato horizontal (1200x400px aprox).</div>
-            </div>
-            <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, #22c55e, #16a34a);">
-                <i class="fas fa-check-circle"></i> SUBIR BANNER DE PROMO
-            </button>
-        </form>
-    </div>
-
-    <div class="table-card">
-        <h2><i class="fas fa-images"></i> Gestionar Banners</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Título Promo</th>
-                    <th>Vista Previa</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% if (typeof promociones !== 'undefined' && promociones) { %>
-                    <% promociones.forEach(promo => { %>
-                        <tr>
-                            <td><%= promo.id %></td>
-                            <td><%= promo.titulo %></td>
-                            <td>
-                                <img src="<%= promo.imagen_url %>" style="height: 40px; border-radius: 4px; border: 1px solid #334155;">
-                            </td>
-                            <td class="actions">
-                                <a href="/admin/eliminar-promocion/<%= promo.id %>" 
-                                   class="btn-action btn-delete" 
-                                   onclick="return confirm('¿Eliminar este banner de promoción?')">
-                                     <i class="fas fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    <% }) %>
-                <% } %>
-            </tbody>
-        </table>
-    </div>
-
-    <div class="form-card">
-        <h2><i class="fas fa-newspaper"></i> Nueva Novedad / Noticia</h2>
-        <form action="/admin/novedad" method="POST" enctype="multipart/form-data">
-            <div class="file-grid">
-                <div class="input-group">
-                    <label>Tipo de Etiqueta</label>
-                    <select name="tag_type" required>
-                        <option value="Live">En Vivo (Live)</option>
-                        <option value="Fecha">Fecha Actual</option>
+                    <label>Seleccionar Marca</label>
+                    <select name="marca" required>
+                        <option value="Hikvision">Hikvision</option>
+                        <option value="HiLook">HiLook</option>
+                        <option value="Dahua">Dahua</option>
+                        <option value="Ezviz">Ezviz</option>
+                        <option value="Imou">Imou</option>
+                        <option value="Uniview">Uniview</option>
+                        <option value="Honeywell">Honeywell</option>
+                        <option value="ZKTeco">ZKTeco</option>
+                        <option value="Logitech">Logitech</option>
+                        <option value="Axis">Axis</option>
+                        <option value="Bosch">Bosch</option>
+                        <option value="Epcom">Epcom</option>
+                        <option value="TPlink">TPlink</option>
                     </select>
                 </div>
+
                 <div class="input-group">
-                    <label>Texto de la Etiqueta (Si eliges Fecha)</label>
-                    <input type="text" name="tag_text" placeholder="Ej: 15 Jun o Nuevo">
+                    <label>Título del Kit / Producto</label>
+                    <input type="text" name="titulo" placeholder="Ej: Kit ColorVu TurboHD 1080p" required>
                 </div>
-            </div>
 
-            <div class="input-group">
-                <label>Título de la Novedad</label>
-                <input type="text" name="titulo" placeholder="Ej: Lanzamiento de Nueva APP Hik-Connect" required>
-            </div>
+                <div class="input-group">
+                    <label>Detalles Rápidos (Debajo del título)</label>
+                    <input type="text" name="subtitulo" placeholder="Ej: DVR 4 Canales • 4 Cámaras • Accesorios" required>
+                </div>
 
-            <div class="input-group">
-                <label>Descripción / Contenido Corto</label>
-                <textarea name="descripcion" rows="3" placeholder="Ej: Descubre las nuevas funciones de analítica avanzada que..." required></textarea>
-            </div>
+                <div class="file-grid">
+                    <div class="input-group">
+                        <label>Precio de Venta ($ MXN)</label>
+                        <input type="number" name="precio" placeholder="Ej: 2999" min="0" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Stock / Disponibilidad Inicial</label>
+                        <input type="number" name="stock" placeholder="Ej: 10" min="0" required>
+                    </div>
+                </div>
 
-            <div class="input-group">
-                <label>Enlace de redirección (Ver más)</label>
-                <input type="text" name="link" placeholder="Ej: /blog/noticia-1 o un enlace de WhatsApp" required>
-            </div>
+                <div class="input-group">
+                    <label>Modelo de Serie</label>
+                    <input type="text" name="modelo" placeholder="Ej: KH1080P4BC" required>
+                </div>
 
-            <div class="input-group">
-                <label>Imagen de Miniatura</label>
-                <input type="file" name="imagen_novedad" accept="image/*" required>
-                <div class="hint">Se recomienda formato tipo tarjeta/miniatura.</div>
-            </div>
+                <div class="input-group">
+                    <label>Características (Una por cada línea)</label>
+                    <textarea name="caracteristicas" rows="5" placeholder="Cámaras con visión a color 24/7&#10;Visualización remota Hik-Connect&#10;Incluye instalación básica" required></textarea>
+                    <div class="hint">Cada salto de línea se convertirá en un punto de la lista.</div>
+                </div>
 
-            <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, #a855f7, #7c3aed);">
-                <i class="fas fa-paper-plane"></i> PUBLICAR NOVEDAD
-            </button>
-        </form>
-    </div>
+                <div class="file-grid">
+                    <div class="input-group">
+                        <label>Imagen Principal</label>
+                        <input type="file" name="imagen1" accept="image/*" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Imagen Detalle</label>
+                        <input type="file" name="imagen2" accept="image/*" required>
+                    </div>
+                </div>
 
-    <div class="table-card">
-        <h2><i class="fas fa-sliders-h"></i> Gestionar Novedades</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Etiqueta</th>
-                    <th>Título</th>
-                    <th>Vista Previa</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% if (typeof novedades !== 'undefined' && novedades && novedades.length > 0) { %>
-                    <% novedades.forEach(novedad => { %>
-                        <tr>
-                            <td>
-                                <span class="badge-status <%= novedad.tag_type === 'Live' ? 'status-pendiente' : 'status-proceso' %>">
-                                    <%= novedad.tag_type === 'Live' ? 'LIVE' : novedad.tag_text %>
-                                </span>
-                            </td>
-                            <td><%= novedad.titulo %></td>
-                            <td>
-                                <img src="<%= novedad.imagen_url %>" style="height: 40px; width: 60px; object-fit: cover; border-radius: 4px; border: 1px solid #334155;">
-                            </td>
-                            <td class="actions">
-                                <a href="/admin/eliminar-novedad/<%= novedad.id %>" 
-                                   class="btn-action btn-delete" 
-                                   onclick="return confirm('¿Seguro que quieres eliminar esta novedad?')">
-                                     <i class="fas fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    <% }) %>
-                <% } else { %>
+                <button type="submit" class="btn-submit"><i class="fas fa-cloud-upload-alt"></i> PUBLICAR EN CATÁLOGO</button>
+            </form>
+        </div>
+
+        <div class="table-card">
+            <h2><i class="fas fa-tasks"></i> Gestionar Catálogo</h2>
+            <table>
+                <thead>
                     <tr>
-                        <td colspan="4" style="text-align: center; color: #64748b;">No hay novedades guardadas actualmente.</td>
+                        <th>Modelo</th>
+                        <th>Título</th>
+                        <th>Marca</th>
+                        <th>Acciones</th>
                     </tr>
-                <% } %>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <% if (typeof productos !== 'undefined' && productos) { %>
+                        <% productos.forEach(producto => { %>
+                            <tr>
+                                <td><%= producto.modelo %></td>
+                                <td><%= producto.titulo %></td>
+                                <td><%= producto.marca %></td>
+                                <td class="actions">
+                                    <a href="/admin/editar/<%= producto.id %>" class="btn-action btn-edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="/admin/eliminar/<%= producto.id %>" 
+                                       class="btn-action btn-danger" 
+                                       onclick="return confirm('¿Seguro que quieres eliminar este producto?')">
+                                         <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
     </div>
 
+    <div id="seccion-pedidos" class="admin-section">
+        <div class="table-card">
+            <h2><i class="fas fa-shopping-cart"></i> Pedidos Recibidos (Tienda en Línea)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cliente / Contacto</th>
+                        <th>Productos Solicitados</th>
+                        <th>Total</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (typeof pedidos !== 'undefined' && pedidos && pedidos.length > 0) { %>
+                        <% pedidos.forEach(pedido => { %>
+                            <tr>
+                                <td>
+                                    <strong><%= pedido.cliente_nombre %></strong><br>
+                                    <span style="font-size: 0.8rem; color: #94a3b8;"><%= pedido.cliente_telefono %></span>
+                                </td>
+                                <td>
+                                    <span style="font-size: 0.85rem;"><%= pedido.resumen_productos %></span>
+                                </td>
+                                <td style="font-weight: bold; color: var(--accent-color);">
+                                    $<%= pedido.total %> MXN
+                                </td>
+                                <td>
+                                    <% if(pedido.estado === 'pendiente') { %>
+                                        <span class="badge-status status-pendiente">Pendiente</span>
+                                    <% } else if(pedido.estado === 'proceso') { %>
+                                        <span class="badge-status status-proceso">En camino</span>
+                                    <% } else { %>
+                                        <span class="badge-status status-completado">Entregado</span>
+                                    <% } %>
+                                </td>
+                                <td class="actions">
+                                    <a href="/admin/pedido-estado/<%= pedido.id %>" class="btn-action btn-edit" title="Actualizar Estado">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </a>
+                                    <a href="/admin/eliminar-pedido/<%= pedido.id %>" 
+                                       class="btn-action btn-delete" 
+                                       onclick="return confirm('¿Eliminar registro de pedido?')">
+                                         <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: #64748b;">No hay pedidos registrados en la base de datos actualmente.</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="seccion-proyectos" class="admin-section">
+        <div class="form-card">
+            <h2><i class="fas fa-folder-plus"></i> Nuevo Proyecto Destacado</h2>
+            
+            <form action="/admin/proyecto" method="POST" enctype="multipart/form-data">
+                <div class="input-group">
+                    <label>Categoría del Proyecto</label>
+                    <select name="badge" required>
+                        <option value="Comercial">Comercial</option>
+                        <option value="Residencial">Residencial</option>
+                        <option value="Infraestructura">Infraestructura</option>
+                        <option value="Industrial">Industrial</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Nombre / Título del Proyecto</label>
+                    <input type="text" name="titulo" placeholder="Ej: Seguridad Perimetral Hogar" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Descripción del Caso de Éxito</label>
+                    <textarea name="descripcion" rows="4" placeholder="Ej: Implementación de cámaras con tecnología de visión nocturna a color..." required></textarea>
+                </div>
+
+                <div class="file-grid">
+                    <div class="input-group">
+                        <label>Etiqueta Técnica 1</label>
+                        <input type="text" name="tag1" placeholder="Ej: 4 Cámaras" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Etiqueta Técnica 2</label>
+                        <input type="text" name="tag2" placeholder="Ej: Exterior" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Imagen de la Instalación Realizada</label>
+                    <input type="file" name="imagen_proyecto" accept="image/*" required>
+                </div>
+
+                <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, #38bdf8, #0284c7);">
+                    <i class="fas fa-cloud-upload-alt"></i> PUBLICAR EN PORTAFOLIO
+                </button>
+            </form>
+        </div>
+
+        <div class="table-card">
+            <h2><i class="fas fa-briefcase"></i> Gestionar Portafolio</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Categoría</th>
+                        <th>Título del Proyecto</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (typeof proyectos !== 'undefined' && proyectos && proyectos.length > 0) { %>
+                        <% proyectos.forEach(proyecto => { %>
+                            <tr>
+                                <td><span style="color: var(--accent-color); font-weight: bold;"><%= proyecto.badge %></span></td>
+                                <td><%= proyecto.titulo %></td>
+                                <td class="actions">
+                                    <a href="/admin/eliminar-proyecto/<%= proyecto.id %>" 
+                                       class="btn-action btn-delete" 
+                                       onclick="return confirm('¿Seguro que quieres eliminar este proyecto?')">
+                                         <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="3" style="text-align: center; color: #64748b;">No hay proyectos activos en el portafolio actualmente.</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="seccion-banners" class="admin-section">
+        <div class="form-card">
+            <h2><i class="fas fa-ad"></i> Nueva Promoción (Canva)</h2>
+            <form action="/admin/promocion" method="POST" enctype="multipart/form-data">
+                <div class="input-group">
+                    <label>Título de la Promo</label>
+                    <input type="text" name="titulo" placeholder="Ej: Especial Buen Fin" required>
+                </div>
+                <div class="input-group">
+                    <label>Link de WhatsApp (Opcional)</label>
+                    <input type="text" name="link" placeholder="https://wa.me/...">
+                </div>
+                <div class="input-group">
+                    <label>Diseño de Canva (Banner)</label>
+                    <input type="file" name="banner" accept="image/*" required>
+                    <div class="hint">Se recomienda formato horizontal (1200x400px aprox).</div>
+                </div>
+                <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, #22c55e, #16a34a);">
+                    <i class="fas fa-check-circle"></i> SUBIR BANNER DE PROMO
+                </button>
+            </form>
+        </div>
+
+        <div class="table-card">
+            <h2><i class="fas fa-images"></i> Gestionar Banners</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Título Promo</th>
+                        <th>Vista Previa</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (typeof promociones !== 'undefined' && promociones) { %>
+                        <% promociones.forEach(promo => { %>
+                            <tr>
+                                <td><%= promo.id %></td>
+                                <td><%= promo.titulo %></td>
+                                <td>
+                                    <img src="<%= promo.imagen_url %>" style="height: 40px; border-radius: 4px; border: 1px solid #334155;">
+                                </td>
+                                <td class="actions">
+                                    <a href="/admin/eliminar-promocion/<%= promo.id %>" 
+                                       class="btn-action btn-delete" 
+                                       onclick="return confirm('¿Eliminar este banner de promoción?')">
+                                         <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="seccion-novedades" class="admin-section">
+        <div class="form-card">
+            <h2><i class="fas fa-newspaper"></i> Nueva Novedad / Noticia</h2>
+            <form action="/admin/novedad" method="POST" enctype="multipart/form-data">
+                <div class="file-grid">
+                    <div class="input-group">
+                        <label>Tipo de Etiqueta</label>
+                        <select name="tag_type" required>
+                            <option value="Live">En Vivo (Live)</option>
+                            <option value="Fecha">Fecha Actual</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Texto de la Etiqueta (Si eliges Fecha)</label>
+                        <input type="text" name="tag_text" placeholder="Ej: 15 Jun o Nuevo">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Título de la Novedad</label>
+                    <input type="text" name="titulo" placeholder="Ej: Lanzamiento de Nueva APP Hik-Connect" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Descripción / Contenido Corto</label>
+                    <textarea name="descripcion" rows="3" placeholder="Ej: Descubre las nuevas funciones de analítica avanzada que..." required></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label>Enlace de redirección (Ver más)</label>
+                    <input type="text" name="link" placeholder="Ej: /blog/noticia-1 o un enlace de WhatsApp" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Imagen de Miniatura</label>
+                    <input type="file" name="imagen_novedad" accept="image/*" required>
+                    <div class="hint">Se recomienda formato tipo tarjeta/miniatura.</div>
+                </div>
+
+                <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, #a855f7, #7c3aed);">
+                    <i class="fas fa-paper-plane"></i> PUBLICAR NOVEDAD
+                </button>
+            </form>
+        </div>
+
+        <div class="table-card">
+            <h2><i class="fas fa-sliders-h"></i> Gestionar Novedades</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Etiqueta</th>
+                        <th>Título</th>
+                        <th>Vista Previa</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (typeof novedades !== 'undefined' && novedades && novedades.length > 0) { %>
+                        <% novedades.forEach(novedad => { %>
+                            <tr>
+                                <td>
+                                    <span class="badge-status <%= novedad.tag_type === 'Live' ? 'status-pendiente' : 'status-proceso' %>">
+                                        <%= novedad.tag_type === 'Live' ? 'LIVE' : novedad.tag_text %>
+                                    </span>
+                                </td>
+                                <td><%= novedad.titulo %></td>
+                                <td>
+                                    <img src="<%= novedad.imagen_url %>" style="height: 40px; width: 60px; object-fit: cover; border-radius: 4px; border: 1px solid #334155;">
+                                </td>
+                                <td class="actions">
+                                    <a href="/admin/eliminar-novedad/<%= novedad.id %>" 
+                                       class="btn-action btn-delete" 
+                                       onclick="return confirm('¿Seguro que quieres eliminar esta novedad?')">
+                                         <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="4" style="text-align: center; color: #64748b;">No hay novedades guardadas actualmente.</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function showSection(sectionId, element) {
+            // 1. Ocultar todas las secciones
+            document.querySelectorAll('.admin-section').forEach(sec => {
+                sec.classList.remove('active');
+            });
+            
+            // 2. Quitar la clase activa de todos los botones
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 3. Mostrar la sección seleccionada y activar el botón
+            document.getElementById(sectionId).classList.add('active');
+            element.classList.add('active');
+        }
+    </script>
 </body>
 </html>
