@@ -26,7 +26,7 @@
             padding: 20px; 
         }
 
-        /* --- NUEVOS ESTILOS PARA LAS PESTAÑAS (TABS) --- */
+        /* --- ESTILOS PARA LAS PESTAÑAS (TABS) --- */
         .admin-nav {
             display: flex;
             gap: 10px;
@@ -59,7 +59,6 @@
             align-items: center;
         }
         .admin-section.active { display: flex; }
-        /* ---------------------------------------------- */
 
         .form-card, .table-card { 
             background: var(--card-bg); 
@@ -172,6 +171,7 @@
         <button class="tab-btn" onclick="showSection('seccion-novedades', this)">Novedades</button>
     </div>
 
+    <!-- SECCIÓN PRODUCTOS -->
     <div id="seccion-productos" class="admin-section active">
         <div class="form-card">
             <h2><i class="fas fa-plus-circle"></i> Nuevo Producto SVO</h2>
@@ -266,7 +266,7 @@
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     <a href="/admin/eliminar/<%= producto.id %>" 
-                                       class="btn-action btn-danger" 
+                                       class="btn-action btn-delete" 
                                        onclick="return confirm('¿Seguro que quieres eliminar este producto?')">
                                          <i class="fas fa-trash"></i>
                                     </a>
@@ -279,6 +279,7 @@
         </div>
     </div>
 
+    <!-- SECCIÓN PEDIDOS -->
     <div id="seccion-pedidos" class="admin-section">
         <div class="table-card">
             <h2><i class="fas fa-shopping-cart"></i> Pedidos Recibidos (Tienda en Línea)</h2>
@@ -337,6 +338,7 @@
         </div>
     </div>
 
+    <!-- SECCIÓN PROYECTOS -->
     <div id="seccion-proyectos" class="admin-section">
         <div class="form-card">
             <h2><i class="fas fa-folder-plus"></i> Nuevo Proyecto Destacado</h2>
@@ -419,6 +421,7 @@
         </div>
     </div>
 
+    <!-- SECCIÓN BANNERS -->
     <div id="seccion-banners" class="admin-section">
         <div class="form-card">
             <h2><i class="fas fa-ad"></i> Nueva Promoción (Canva)</h2>
@@ -477,6 +480,7 @@
         </div>
     </div>
 
+    <!-- SECCIÓN NOVEDADES -->
     <div id="seccion-novedades" class="admin-section">
         <div class="form-card">
             <h2><i class="fas fa-newspaper"></i> Nueva Novedad / Noticia</h2>
