@@ -327,6 +327,18 @@ app.post('/admin/proyecto', upload.single('imagen_proyecto'), (req, res) => {
     });
 });
 
+// Eliminar un proyecto
+app.get('/admin/eliminar-proyecto/:id', (req, res) => {
+    const { id } = req.params;
+    db.query('DELETE FROM proyectos WHERE id = ?', [id], (err, result) => {
+        if (err) {
+            console.error("Error al eliminar el proyecto:", err);
+            return res.status(500).send("Error al eliminar el proyecto.");
+        }
+        res.redirect('/admin');
+    });
+});
+
 // --- 5. PUERTO DINÁMICO PARA RENDER ---
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
