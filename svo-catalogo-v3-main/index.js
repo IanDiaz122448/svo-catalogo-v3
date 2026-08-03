@@ -53,15 +53,15 @@ db.connect((err) => {
             }
         });
 
-        // --- CREACIÓN AUTOMÁTICA DE LA TABLA PROYECTOS ---
+        // --- CREACIÓN AUTOMÁTICA DE LA TABLA PROYECTOS (ADAPTADA A TUS TARJETAS) ---
         const sqlCrearProyectos = `
         CREATE TABLE IF NOT EXISTS proyectos (
             id INT AUTO_INCREMENT PRIMARY KEY,
             badge VARCHAR(50),
             titulo VARCHAR(255) NOT NULL,
             descripcion TEXT,
-            tag1 VARCHAR(50),
-            tag2 VARCHAR(50),
+            ubicacion VARCHAR(100),
+            reciente VARCHAR(50),
             link VARCHAR(255),
             imagen_url VARCHAR(255),
             fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -131,7 +131,6 @@ app.get('/admin', (req, res) => {
                 db.query('SELECT * FROM novedades ORDER BY id DESC', (err, novedades) => {
                     const listaNovedades = err ? [] : novedades;
                     
-                    // Cargar proyectos en el panel de administración
                     db.query('SELECT * FROM proyectos ORDER BY id DESC', (err, proyectos) => {
                         const listaProyectos = err ? [] : proyectos;
                         
@@ -303,14 +302,17 @@ app.get('/admin/eliminar-novedad/:id', (req, res) => {
     });
 });
 
+// =============================================
 // --- SECCIÓN DE PROYECTOS ---
+// =============================================
 
+// Subir un proyecto
 app.post('/admin/proyecto', upload.single('imagen_proyecto'), (req, res) => {
-    const { badge, titulo, descripcion, tag1, tag2, link } = req.body;
+    const { badge, titulo, descripcion, ubicacion, reciente, link } = req.body;
     const imagen_url = req.file ? req.file.path : null;
 
-    const query = 'INSERT INTO proyectos (badge, titulo, descripcion, tag1, tag2, link, imagen_url) VALUES (?, ?, ?, ?, ?, ?, ?)';
-    db.query(query, [badge, titulo, descripcion, tag1, tag2, link, imagen_url], (err, result) => {
+    const query = 'INSERT INTO proyectos (badge, titulo, descripcion, ubicacion, reciente, link, imagen_url) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    db.query(query, [badge, titulo, descripcion, ubicacion, reciente, link, imagen_url], (err, result) => {
         if (err) {
             console.error('❌ Error al guardar proyecto:', err.message);
             return res.status(500).send("Error al guardar el proyecto en la base de datos.");
@@ -319,6 +321,7 @@ app.post('/admin/proyecto', upload.single('imagen_proyecto'), (req, res) => {
     });
 });
 
+// Eliminar un proyecto
 app.get('/admin/eliminar-proyecto/:id', (req, res) => {
     const { id } = req.params;
     db.query('DELETE FROM proyectos WHERE id = ?', [id], (err, result) => {
