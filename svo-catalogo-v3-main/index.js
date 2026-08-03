@@ -32,7 +32,7 @@ db.connect((err) => {
     } else {
         console.log('✅ Conexión establecida correctamente');
         
-        // --- CREACIÓN AUTOMÁTICA DE LA TABLA NOVEDADES (POR SI NO EXISTE) ---
+        // --- CREACIÓN AUTOMÁTICA DE LA TABLA NOVEDADES ---
         const sqlCrearNovedades = `
         CREATE TABLE IF NOT EXISTS novedades (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -45,7 +45,7 @@ db.connect((err) => {
             fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );`;
 
-        db.query(sqlCrearNovedades, (errTable, result) => {
+        db.query(sqlCrearNovedades, (errTable) => {
             if (errTable) {
                 console.error('❌ Error al verificar/crear la tabla novedades:', errTable.message);
             } else {
@@ -53,7 +53,7 @@ db.connect((err) => {
             }
         });
 
-        // --- CREACIÓN AUTOMÁTICA DE LA TABLA PROYECTOS (POR SI NO EXISTE) ---
+        // --- CREACIÓN AUTOMÁTICA DE LA TABLA PROYECTOS ---
         const sqlCrearProyectos = `
         CREATE TABLE IF NOT EXISTS proyectos (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -79,7 +79,7 @@ db.connect((err) => {
 
 // --- 4. RUTAS ---
 
-// Inicio (Ahora carga los banners de promociones Y las novedades)
+// Inicio
 app.get('/', (req, res) => {
     db.query('SELECT * FROM promociones ORDER BY fecha_creacion DESC', (err, banners) => {
         if (err) banners = [];
@@ -93,12 +93,15 @@ app.get('/', (req, res) => {
 
 app.get('/cotizar', (req, res) => res.render('cotizar'));
 
-// === NUEVA RUTA PARA PROYECTOS INDEPENDIENTES ===
+// Ruta pública de Proyectos
 app.get('/proyectos', (req, res) => {
-    res.render('proyectos');
+    db.query('SELECT * FROM proyectos ORDER BY id DESC', (err, proyectos) => {
+        const listaProyectos = err ? [] : proyectos;
+        res.render('proyectos', { proyectos: listaProyectos });
+    });
 });
 
-// === RUTA AGREGADA PARA EL CARRITO DE COMPRAS ===
+// Ruta del Carrito
 app.get('/carrito', (req, res) => {
     res.render('carrito');
 });
@@ -114,7 +117,7 @@ app.get('/catalogo', (req, res) => {
     });
 });
 
-// Panel de Admin (Muestra productos, promociones, pedidos y novedades)
+// Panel de Admin
 app.get('/admin', (req, res) => {
     db.query('SELECT * FROM productos', (err, productos) => {
         if (err) return res.send("Error al cargar productos");
@@ -125,15 +128,20 @@ app.get('/admin', (req, res) => {
             db.query('SELECT * FROM pedidos ORDER BY id DESC', (err, pedidos) => {
                 const listaPedidos = err ? [] : pedidos;
                 
-                // === NUEVA CONSULTA PARA TRAER LAS NOVEDADES AL PANEL ===
                 db.query('SELECT * FROM novedades ORDER BY id DESC', (err, novedades) => {
                     const listaNovedades = err ? [] : novedades;
                     
-                    res.render('admin', { 
-                        productos: productos, 
-                        promociones: promociones, 
-                        pedidos: listaPedidos,
-                        novedades: listaNovedades // Enviada correctamente a admin.ejs
+                    // Cargar proyectos en el panel de administración
+                    db.query('SELECT * FROM proyectos ORDER BY id DESC', (err, proyectos) => {
+                        const listaProyectos = err ? [] : proyectos;
+                        
+                        res.render('admin', { 
+                            productos: productos, 
+                            promociones: promociones, 
+                            pedidos: listaPedidos,
+                            novedades: listaNovedades,
+                            proyectos: listaProyectos
+                        });
                     });
                 });
             });
@@ -267,19 +275,14 @@ app.get('/admin/eliminar-promocion/:id', (req, res) => {
     });
 });
 
+// --- SECCIÓN DE NOVEDADES ---
 
-// =============================================
-// --- NUEVA SECCIÓN DE NOVEDADES / NOTICIAS ---
-// =============================================
-
-// Subir una novedad
 app.post('/admin/novedad', upload.single('imagen_novedad'), (req, res) => {
     const { tag_type, tag_text, titulo, descripcion, link } = req.body;
     const imagen_url = req.file ? req.file.path : null;
 
     if (!imagen_url) return res.status(400).send("Debe subir una imagen para la novedad.");
 
-    // Guardará 'Live' o el texto manual de la fecha dependiendo de la selección
     const textoEtiqueta = tag_type === 'Live' ? 'Live' : tag_text;
 
     const query = 'INSERT INTO novedades (tag_type, tag_text, titulo, descripcion, link, imagen_url) VALUES (?, ?, ?, ?, ?, ?)';
@@ -292,7 +295,6 @@ app.post('/admin/novedad', upload.single('imagen_novedad'), (req, res) => {
     });
 });
 
-// Eliminar una novedad
 app.get('/admin/eliminar-novedad/:id', (req, res) => {
     const { id } = req.params;
     db.query('DELETE FROM novedades WHERE id = ?', [id], (err, result) => {
@@ -301,12 +303,8 @@ app.get('/admin/eliminar-novedad/:id', (req, res) => {
     });
 });
 
-
-// =============================================
 // --- SECCIÓN DE PROYECTOS ---
-// =============================================
 
-// Subir un proyecto
 app.post('/admin/proyecto', upload.single('imagen_proyecto'), (req, res) => {
     const { badge, titulo, descripcion, tag1, tag2, link } = req.body;
     const imagen_url = req.file ? req.file.path : null;
@@ -321,7 +319,6 @@ app.post('/admin/proyecto', upload.single('imagen_proyecto'), (req, res) => {
     });
 });
 
-// Eliminar un proyecto
 app.get('/admin/eliminar-proyecto/:id', (req, res) => {
     const { id } = req.params;
     db.query('DELETE FROM proyectos WHERE id = ?', [id], (err, result) => {
@@ -329,7 +326,6 @@ app.get('/admin/eliminar-proyecto/:id', (req, res) => {
         res.redirect('/admin');
     });
 });
-
 
 // --- 5. PUERTO DINÁMICO PARA RENDER ---
 const PORT = process.env.PORT || 3000;
