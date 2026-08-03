@@ -53,7 +53,7 @@ db.connect((err) => {
             }
         });
 
-        // --- CREACIÓN AUTOMÁTICA DE LA TABLA PROYECTOS (ADAPTADA A TUS TARJETAS) ---
+        // --- CREACIÓN AUTOMÁTICA DE LA TABLA PROYECTOS ---
         const sqlCrearProyectos = `
         CREATE TABLE IF NOT EXISTS proyectos (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -61,6 +61,8 @@ db.connect((err) => {
             titulo VARCHAR(255) NOT NULL,
             descripcion TEXT,
             ubicacion VARCHAR(100),
+            tag1 VARCHAR(50),
+            tag2 VARCHAR(50),
             reciente VARCHAR(50),
             link VARCHAR(255),
             imagen_url VARCHAR(255),
@@ -308,11 +310,9 @@ app.get('/admin/eliminar-novedad/:id', (req, res) => {
 
 // Subir un proyecto
 app.post('/admin/proyecto', upload.single('imagen_proyecto'), (req, res) => {
-    // 1. Extraer los datos del formulario (incluyendo ubicacion)
     const { badge, titulo, descripcion, ubicacion, tag1, tag2 } = req.body;
-    const imagen_url = `/uploads/${req.file.filename}`;
+    const imagen_url = req.file ? req.file.path : null;
 
-    // 2. Consulta SQL incluyendo el campo 'ubicacion'
     const query = `
         INSERT INTO proyectos (badge, titulo, descripcion, ubicacion, tag1, tag2, imagen_url) 
         VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -320,7 +320,7 @@ app.post('/admin/proyecto', upload.single('imagen_proyecto'), (req, res) => {
 
     db.query(query, [badge, titulo, descripcion, ubicacion, tag1, tag2, imagen_url], (err, result) => {
         if (err) {
-            console.error("Error en MySQL:", err); // Revisa la consola si vuelve a fallar
+            console.error("Error en MySQL:", err);
             return res.send("Error al guardar el proyecto en la base de datos.");
         }
         res.redirect('/admin');
