@@ -52,6 +52,28 @@ db.connect((err) => {
                 console.log('📦 Tabla "novedades" verificada/creada correctamente en la BD.');
             }
         });
+
+        // --- CREACIÓN AUTOMÁTICA DE LA TABLA PROYECTOS (POR SI NO EXISTE) ---
+        const sqlCrearProyectos = `
+        CREATE TABLE IF NOT EXISTS proyectos (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            badge VARCHAR(50),
+            titulo VARCHAR(255) NOT NULL,
+            descripcion TEXT,
+            tag1 VARCHAR(50),
+            tag2 VARCHAR(50),
+            link VARCHAR(255),
+            imagen_url VARCHAR(255),
+            fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );`;
+
+        db.query(sqlCrearProyectos, (errTable) => {
+            if (errTable) {
+                console.error('❌ Error al verificar/crear la tabla proyectos:', errTable.message);
+            } else {
+                console.log('📦 Tabla "proyectos" verificada/creada correctamente en la BD.');
+            }
+        });
     }
 });
 
@@ -275,6 +297,35 @@ app.get('/admin/eliminar-novedad/:id', (req, res) => {
     const { id } = req.params;
     db.query('DELETE FROM novedades WHERE id = ?', [id], (err, result) => {
         if (err) return res.status(500).send("Error al eliminar la novedad.");
+        res.redirect('/admin');
+    });
+});
+
+
+// =============================================
+// --- SECCIÓN DE PROYECTOS ---
+// =============================================
+
+// Subir un proyecto
+app.post('/admin/proyecto', upload.single('imagen_proyecto'), (req, res) => {
+    const { badge, titulo, descripcion, tag1, tag2, link } = req.body;
+    const imagen_url = req.file ? req.file.path : null;
+
+    const query = 'INSERT INTO proyectos (badge, titulo, descripcion, tag1, tag2, link, imagen_url) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    db.query(query, [badge, titulo, descripcion, tag1, tag2, link, imagen_url], (err, result) => {
+        if (err) {
+            console.error('❌ Error al guardar proyecto:', err.message);
+            return res.status(500).send("Error al guardar el proyecto en la base de datos.");
+        }
+        res.redirect('/admin');
+    });
+});
+
+// Eliminar un proyecto
+app.get('/admin/eliminar-proyecto/:id', (req, res) => {
+    const { id } = req.params;
+    db.query('DELETE FROM proyectos WHERE id = ?', [id], (err, result) => {
+        if (err) return res.status(500).send("Error al eliminar el proyecto.");
         res.redirect('/admin');
     });
 });
