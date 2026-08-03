@@ -3,16 +3,305 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Proyectos Destacados - SVO</title>
+    <title>Proyectos | SVO - Sistemas de Videovigilancia Orizaba</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="/style.css">
+    
+    <style>
+        :root {
+            --accent-color: #00aeef;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --wa-color: #25d366;
+            --fb-color: #1877F2;
+            --mail-color: #ea4335;
+        }
+
+        /* --- HEADER UNIFICADO --- */
+        header {
+            background: #ffffff;
+            border-bottom: 2px solid #f3f4f6;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 8%;
+            box-sizing: border-box;
+        }
+
+        .logo-link { display: flex; align-items: center; text-decoration: none; gap: 15px; }
+        .logo-img { height: 55px; width: auto; }
+        .logo-text { color: #003366; font-family: 'Arial Black', sans-serif; font-size: 0.95rem; line-height: 1.1; text-transform: uppercase; font-weight: 900; }
+
+        nav ul { list-style: none; display: flex; align-items: center; gap: 30px; margin: 0; padding: 0; }
+        nav ul li a { text-decoration: none; color: #1f2937; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; transition: 0.3s; }
+        nav ul li a.active, nav ul li a:hover { color: var(--accent-color); }
+
+        .cart-nav-link {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #1f2937 !important;
+            font-size: 0.85rem;
+        }
+        .cart-badge {
+            position: absolute;
+            top: -12px;
+            right: -14px;
+            background: #ea4335;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #003366;
+            font-size: 1.6rem;
+            cursor: pointer;
+            z-index: 1100;
+        }
+
+        /* --- CONTENIDO PRINCIPAL DE PROYECTOS --- */
+        body {
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding-top: 100px;
+        }
+
+        .page-header {
+            text-align: center;
+            padding: 40px 20px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .page-header h1 span {
+            color: var(--accent-color);
+        }
+
+        .page-header p {
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+
+        .proyectos-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .proyectos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .proyecto-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(56, 189, 248, 0.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .proyecto-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-color);
+        }
+
+        .proyecto-img-wrapper {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+        }
+
+        .proyecto-img-wrapper img, .proyecto-img-wrapper video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .proyecto-card:hover .proyecto-img-wrapper img {
+            transform: scale(1.05);
+        }
+
+        .proyecto-tag {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(0, 174, 239, 0.9);
+            color: #ffffff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .proyecto-info {
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .proyecto-info h3 {
+            font-size: 1.3rem;
+            margin: 0 0 10px 0;
+            color: #ffffff;
+        }
+
+        .proyecto-info p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .proyecto-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            padding-top: 15px;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .proyecto-meta i {
+            color: var(--accent-color);
+            margin-right: 6px;
+        }
+
+        /* --- MENÚ DE CONTACTO FLOTANTE --- */
+        .contact-menu {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            gap: 15px;
+            z-index: 2000;
+        }
+
+        .main-contact {
+            width: 65px;
+            height: 65px;
+            background-color: var(--wa-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            z-index: 1001;
+        }
+
+        .extra-contact {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            font-size: 1.4rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .btn-fb { background-color: var(--fb-color); transition-delay: 0.05s; }
+        .btn-mail { background-color: var(--mail-color); transition-delay: 0.1s; }
+
+        .contact-menu:hover .extra-contact {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .contact-menu:hover .main-contact {
+            transform: scale(1.1) rotate(15deg);
+        }
+
+        @media (max-width: 992px) {
+            header { padding: 10px 5% !important; }
+            .menu-toggle { display: block !important; }
+            nav {
+                position: fixed;
+                top: 80px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 80px);
+                background: #ffffff;
+                transition: 0.4s ease;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                z-index: 999;
+            }
+            nav.active { left: 0 !important; }
+            nav ul {
+                flex-direction: column !important;
+                align-items: center !important;
+                padding-top: 40px !important;
+                gap: 25px !important;
+            }
+        }
+
+        footer {
+            background-color: var(--bg-dark);
+            border-top: 1px solid rgba(56, 189, 248, 0.1);
+            padding: 20px 5%;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-top: 60px;
+        }
+    </style>
 </head>
 <body>
 
+    <!-- NAV / HEADER -->
     <header>
-        <a href="/" class="logo-container">
+        <a href="/" class="logo-link">
             <img src="/img/logo.png" alt="SVO Logo" class="logo-img">
-            <span class="logo-text">Sistemas de Videovigilancia Orizaba</span>
+            <div class="logo-text">SISTEMAS DE<br>VIDEOVIGILANCIA<br>ORIZABA</div>
         </a>
         
         <button class="menu-toggle" id="menuToggle">
@@ -21,70 +310,98 @@
 
         <nav id="navbar">
             <ul>
-                <li><a href="/" style="color:var(--accent-color);">Inicio</a></li>
-                <li><a href="#servicios">Servicios</a></li>
-                <li><a href="/proyectos">Proyectos</a></li>
+                <li><a href="/">Inicio</a></li>
+                <li><a href="/#servicios">Servicios</a></li>
+                <li><a href="/proyectos" class="active">Proyectos</a></li>
                 <li><a href="/catalogo">Catálogo</a></li>
-                <li><a href="#nosotros">Nosotros</a></li>
+                <li><a href="/#nosotros">Nosotros</a></li>
                 <li><a href="/cotizar">Cotizar</a></li>
+                <li>
+                    <a href="/carrito" class="cart-nav-link">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-badge" id="cartBadge">0</span>
+                    </a>
+                </li>
             </ul>
         </nav>
     </header>
 
-    <section id="portafolio" style="margin-top: 40px;">
-        <div style="text-align: center;">
-            <h2>Proyectos <span>Destacados</span></h2>
-            <p style="color: #94a3b8;">Casos de éxito e instalaciones reales en Orizaba y la región.</p>
-        </div>
-
-        <div class="portfolio-grid">
-            <div class="portfolio-item">
-                <div class="portfolio-img-container">
-                    <span class="portfolio-badge">Comercial</span>
-                    <img src="/img/portafolio/local-comercial.jpg" alt="Instalación en Local Comercial">
-                </div>
-                <div class="portfolio-info">
-                    <h3>Monitoreo Inteligente para Comercio</h3>
-                    <p>Instalación de sistema CCTV de alta definición con cámaras de audio bidireccional y alertas de intrusión nocturna directo al celular del propietario.</p>
-                    <div class="portfolio-tags">
-                        <span><i class="fas fa-camera"></i> 4 Cámaras</span>
-                        <span><i class="fas fa-microphone"></i> Audio</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="portfolio-item">
-                <div class="portfolio-img-container">
-                    <span class="portfolio-badge">Residencial</span>
-                    <img src="/img/portafolio/residencia.jpg" alt="Instalación Residencial">
-                </div>
-                <div class="portfolio-info">
-                    <h3>Seguridad Perimetral Hogar</h3>
-                    <p>Implementación de cámaras con tecnología de visión nocturna a color de largo alcance para el resguardo perimetral de una casa habitación de dos niveles.</p>
-                    <div class="portfolio-tags">
-                        <span><i class="fas fa-moon"></i> ColorVu</span>
-                        <span><i class="fas fa-shield-alt"></i> Exterior</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="portfolio-item">
-                <div class="portfolio-img-container">
-                    <span class="portfolio-badge">Infraestructura</span>
-                    <img src="/img/portafolio/cableado.jpg" alt="Cableado Estructurado">
-                </div>
-                <div class="portfolio-info">
-                    <h3>Mantenimiento y Cableado Estructurado</h3>
-                    <p>Peinado de rack, sustitución de cableado viejo por UTP 100% cobre certificado y reubicación de grabador para optimizar la señal de video.</p>
-                    <div class="portfolio-tags">
-                        <span><i class="fas fa-network-wired"></i> Voz y Datos</span>
-                        <span><i class="fas fa-tools"></i> Soporte</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- CABECERA DE LA PÁGINA -->
+    <section class="page-header">
+        <h1>Nuestros <span>Proyectos</span></h1>
+        <p>Conoce algunos de los trabajos de instalación, cableado y sistemas de videovigilancia que hemos realizado en Orizaba y la región.</p>
     </section>
 
+    <!-- GRID DE PROYECTOS -->
+    <main class="proyectos-container">
+        <div class="proyectos-grid">
+            <% if (typeof proyectos !== 'undefined' && proyectos.length > 0) { %>
+                <% proyectos.forEach(p => { %>
+                    <article class="proyecto-card">
+                        <div class="proyecto-img-wrapper">
+                            <% if (p.categoria) { %>
+                                <span class="proyecto-tag"><%= p.categoria %></span>
+                            <% } %>
+
+                            <% if (p.imagen_url && (p.imagen_url.includes('.mp4') || p.imagen_url.includes('/video/upload/'))) { %>
+                                <video controls playsinline>
+                                    <source src="<%= p.imagen_url %>" type="video/mp4">
+                                </video>
+                            <% } else { %>
+                                <img src="<%= p.imagen_url || '/img/default-proyecto.jpg' %>" alt="<%= p.titulo %>">
+                            <% } %>
+                        </div>
+                        <div class="proyecto-info">
+                            <h3><%= p.titulo %></h3>
+                            <p><%= p.descripcion %></p>
+                            <div class="proyecto-meta">
+                                <span><i class="fas fa-map-marker-alt"></i> <%= p.ubicacion || 'Orizaba, Ver.' %></span>
+                                <span><i class="fas fa-calendar-alt"></i> <%= p.fecha || '2026' %></span>
+                            </div>
+                        </div>
+                    </article>
+                <% }) %>
+            <% } else { %>
+                <!-- Ejemplos estáticos de muestra si aún no hay proyectos en la Base de Datos -->
+                <article class="proyecto-card">
+                    <div class="proyecto-img-wrapper">
+                        <span class="proyecto-tag">CCTV e IP</span>
+                        <img src="/img/proyecto-cctv.jpg" alt="Instalación CCTV Comercio">
+                    </div>
+                    <div class="proyecto-info">
+                        <h3>Instalación de Sistema CCTV HD en Plaza Comercial</h3>
+                        <p>Montaje e integración de 8 cámaras de alta definición con visión nocturna, canalización metálica y monitoreo remoto centralizado.</p>
+                        <div class="proyecto-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> Orizaba, Ver.</span>
+                            <span><i class="fas fa-calendar-alt"></i> Reciente</span>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="proyecto-card">
+                    <div class="proyecto-img-wrapper">
+                        <span class="proyecto-tag">Cableado Estructurado</span>
+                        <img src="/img/proyecto-redes.jpg" alt="Cableado e Infraestructura">
+                    </div>
+                    <div class="proyecto-info">
+                        <h3>Organización de Rack y Cableado UTP</h3>
+                        <p>Reestructuración de rack de telecomunicaciones, peinado de parcheo, etiquetado e instalación de switch administrable.</p>
+                        <div class="proyecto-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> Córdoba, Ver.</span>
+                            <span><i class="fas fa-calendar-alt"></i> Reciente</span>
+                        </div>
+                    </div>
+                </article>
+            <% } %>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; <%= new Date().getFullYear() %> Sistemas de Videovigilancia Orizaba. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- MENÚ FLOTANTE DE CONTACTO -->
     <div class="contact-menu">
         <a href="https://wa.me/522721569109" class="main-contact" target="_blank">
             <i class="fab fa-whatsapp"></i>
@@ -98,6 +415,7 @@
     </div>
 
     <script>
+        // --- MENÚ HAMBURGUESA MÓVIL ---
         const menuToggle = document.getElementById('menuToggle');
         const navbar = document.getElementById('navbar');
 
