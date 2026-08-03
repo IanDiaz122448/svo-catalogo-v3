@@ -308,24 +308,21 @@ app.get('/admin/eliminar-novedad/:id', (req, res) => {
 
 // Subir un proyecto
 app.post('/admin/proyecto', upload.single('imagen_proyecto'), (req, res) => {
-    const { badge, titulo, descripcion, ubicacion, reciente, link } = req.body;
-    const imagen_url = req.file ? req.file.path : null;
+    // 1. Extraer los datos del formulario (incluyendo ubicacion)
+    const { badge, titulo, descripcion, ubicacion, tag1, tag2 } = req.body;
+    const imagen_url = `/uploads/${req.file.filename}`;
 
-    const query = 'INSERT INTO proyectos (badge, titulo, descripcion, ubicacion, reciente, link, imagen_url) VALUES (?, ?, ?, ?, ?, ?, ?)';
-    db.query(query, [badge, titulo, descripcion, ubicacion, reciente, link, imagen_url], (err, result) => {
+    // 2. Consulta SQL incluyendo el campo 'ubicacion'
+    const query = `
+        INSERT INTO proyectos (badge, titulo, descripcion, ubicacion, tag1, tag2, imagen_url) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    db.query(query, [badge, titulo, descripcion, ubicacion, tag1, tag2, imagen_url], (err, result) => {
         if (err) {
-            console.error('❌ Error al guardar proyecto:', err.message);
-            return res.status(500).send("Error al guardar el proyecto en la base de datos.");
+            console.error("Error en MySQL:", err); // Revisa la consola si vuelve a fallar
+            return res.send("Error al guardar el proyecto en la base de datos.");
         }
-        res.redirect('/admin');
-    });
-});
-
-// Eliminar un proyecto
-app.get('/admin/eliminar-proyecto/:id', (req, res) => {
-    const { id } = req.params;
-    db.query('DELETE FROM proyectos WHERE id = ?', [id], (err, result) => {
-        if (err) return res.status(500).send("Error al eliminar el proyecto.");
         res.redirect('/admin');
     });
 });
