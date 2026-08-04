@@ -138,6 +138,27 @@
             width: 100%;
             height: 220px;
             overflow: hidden;
+            background: #0f172a;
+        }
+
+        /* Galería en cuadrícula según cantidad de fotos */
+        .proyecto-img-wrapper.grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px;
+        }
+
+        .proyecto-img-wrapper.grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+        }
+
+        .proyecto-img-wrapper.grid-4 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 2px;
         }
 
         .proyecto-img-wrapper img, .proyecto-img-wrapper video {
@@ -163,6 +184,7 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            z-index: 10;
         }
 
         .proyecto-info {
@@ -337,18 +359,31 @@
         <div class="proyectos-grid">
             <% if (typeof proyectos !== 'undefined' && proyectos.length > 0) { %>
                 <% proyectos.forEach(p => { %>
+                    <% 
+                        let fotos = [];
+                        if (p.imagen_url) fotos.push(p.imagen_url);
+                        if (p.imagen_url2) fotos.push(p.imagen_url2);
+                        if (p.imagen_url3) fotos.push(p.imagen_url3);
+                        if (p.imagen_url4) fotos.push(p.imagen_url4);
+                    %>
                     <article class="proyecto-card">
-                        <div class="proyecto-img-wrapper">
-                            <% if (p.categoria) { %>
-                                <span class="proyecto-tag"><%= p.categoria %></span>
+                        <div class="proyecto-img-wrapper <%= fotos.length > 1 ? 'grid-' + fotos.length : '' %>">
+                            <% if (p.badge || p.categoria) { %>
+                                <span class="proyecto-tag"><%= p.badge || p.categoria %></span>
                             <% } %>
 
-                            <% if (p.imagen_url && (p.imagen_url.includes('.mp4') || p.imagen_url.includes('/video/upload/'))) { %>
-                                <video controls playsinline>
-                                    <source src="<%= p.imagen_url %>" type="video/mp4">
-                                </video>
+                            <% if (fotos.length > 0) { %>
+                                <% fotos.forEach(foto => { %>
+                                    <% if (foto.includes('.mp4') || foto.includes('/video/upload/')) { %>
+                                        <video controls playsinline>
+                                            <source src="<%= foto %>" type="video/mp4">
+                                        </video>
+                                    <% } else { %>
+                                        <img src="<%= foto %>" alt="<%= p.titulo %>">
+                                    <% } %>
+                                <% }) %>
                             <% } else { %>
-                                <img src="<%= p.imagen_url || '/img/default-proyecto.jpg' %>" alt="<%= p.titulo %>">
+                                <img src="/img/default-proyecto.jpg" alt="<%= p.titulo %>">
                             <% } %>
                         </div>
                         <div class="proyecto-info">

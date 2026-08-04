@@ -308,17 +308,23 @@ app.get('/admin/eliminar-novedad/:id', (req, res) => {
 // --- SECCIÓN DE PROYECTOS ---
 // =============================================
 
-// Subir un proyecto
-app.post('/admin/proyecto', upload.single('imagen_proyecto'), (req, res) => {
+// Subir un proyecto (Permite hasta 4 fotos)
+app.post('/admin/proyecto', upload.array('imagenes_proyecto', 4), (req, res) => {
     const { badge, titulo, descripcion, ubicacion, tag1, tag2 } = req.body;
-    const imagen_url = req.file ? req.file.path : null;
+
+    // Extraer las rutas de los archivos recibidos en req.files
+    const imagenes = req.files ? req.files.map(file => file.path) : [];
+    const img1 = imagenes[0] || null;
+    const img2 = imagenes[1] || null;
+    const img3 = imagenes[2] || null;
+    const img4 = imagenes[3] || null;
 
     const query = `
-        INSERT INTO proyectos (badge, titulo, descripcion, ubicacion, tag1, tag2, imagen_url) 
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO proyectos (badge, titulo, descripcion, ubicacion, tag1, tag2, imagen_url, imagen_url2, imagen_url3, imagen_url4) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
-    db.query(query, [badge, titulo, descripcion, ubicacion, tag1, tag2, imagen_url], (err, result) => {
+    db.query(query, [badge, titulo, descripcion, ubicacion, tag1, tag2, img1, img2, img3, img4], (err, result) => {
         if (err) {
             console.error("Error en MySQL:", err);
             return res.send("Error al guardar el proyecto en la base de datos.");
