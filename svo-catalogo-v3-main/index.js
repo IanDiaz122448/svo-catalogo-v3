@@ -66,6 +66,9 @@ db.connect((err) => {
             reciente VARCHAR(50),
             link VARCHAR(255),
             imagen_url VARCHAR(255),
+            imagen_url2 VARCHAR(255),
+            imagen_url3 VARCHAR(255),
+            imagen_url4 VARCHAR(255),
             fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );`;
 
