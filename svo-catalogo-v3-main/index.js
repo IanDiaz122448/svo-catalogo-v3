@@ -87,11 +87,11 @@ db.connect((err) => {
 // Inicio
 app.get('/', (req, res) => {
     db.query('SELECT * FROM promociones ORDER BY fecha_creacion DESC', (err, banners) => {
-        if (err) banners = [];
+        const listaBanners = err ? [] : banners;
         
         db.query('SELECT * FROM novedades ORDER BY id DESC', (err, novedades) => {
-            if (err) novedades = [];
-            res.render('index', { banners, novedades });
+            const listaNovedades = err ? [] : novedades;
+            res.render('index', { banners: listaBanners, novedades: listaNovedades });
         });
     });
 });
@@ -125,10 +125,10 @@ app.get('/catalogo', (req, res) => {
 // Panel de Admin
 app.get('/admin', (req, res) => {
     db.query('SELECT * FROM productos', (err, productos) => {
-        if (err) return res.send("Error al cargar productos");
+        const listaProductos = err ? [] : productos;
         
         db.query('SELECT * FROM promociones', (err, promociones) => {
-            if (err) return res.send("Error al cargar promociones");
+            const listaPromociones = err ? [] : promociones;
             
             db.query('SELECT * FROM pedidos ORDER BY id DESC', (err, pedidos) => {
                 const listaPedidos = err ? [] : pedidos;
@@ -140,8 +140,8 @@ app.get('/admin', (req, res) => {
                         const listaProyectos = err ? [] : proyectos;
                         
                         res.render('admin', { 
-                            productos: productos, 
-                            promociones: promociones, 
+                            productos: listaProductos, 
+                            promociones: listaPromociones, 
                             pedidos: listaPedidos,
                             novedades: listaNovedades,
                             proyectos: listaProyectos
@@ -155,11 +155,19 @@ app.get('/admin', (req, res) => {
 
 // --- SECCIÓN DE PRODUCTOS ---
 
-app.post('/admin/subir', upload.fields([{ name: 'imagen1' }, { name: 'imagen2' }]), (req, res) => {
+app.post('/admin/subir', upload.any(), (req, res) => {
     if (!req.body) return res.status(400).send("No se recibieron datos.");
     const { marca, titulo, subtitulo, modelo, caracteristicas, precio, stock } = req.body;
-    const img1 = req.files['imagen1'] ? req.files['imagen1'][0].path : null;
-    const img2 = req.files['imagen2'] ? req.files['imagen2'][0].path : null;
+
+    let img1 = null;
+    let img2 = null;
+
+    if (req.files && req.files.length > 0) {
+        const f1 = req.files.find(f => f.fieldname === 'imagen1') || req.files[0];
+        const f2 = req.files.find(f => f.fieldname === 'imagen2') || req.files[1];
+        img1 = f1 ? f1.path : null;
+        img2 = (f2 && f2 !== f1) ? f2.path : null;
+    }
 
     const query = `INSERT INTO productos 
                     (marca, titulo, subtitulo, modelo, caracteristicas, precio, stock, imagen1, imagen2) 
@@ -185,17 +193,24 @@ app.get('/admin/eliminar/:id', (req, res) => {
 app.get('/admin/editar/:id', (req, res) => {
     const { id } = req.params;
     db.query('SELECT * FROM productos WHERE id = ?', [id], (err, rows) => {
-        if (err || rows.length === 0) return res.status(404).send("Producto no encontrado");
+        if (err || !rows || rows.length === 0) return res.status(404).send("Producto no encontrado");
         res.render('editar', { producto: rows[0] });
     });
 });
 
-app.post('/admin/actualizar/:id', upload.fields([{ name: 'imagen1' }, { name: 'imagen2' }]), (req, res) => {
+app.post('/admin/actualizar/:id', upload.any(), (req, res) => {
     const { id } = req.params;
-    const { marca, titulo, subtitulo, modelo, caracteristicas, precio, stock } = req.body;
+    const { marca, titulo, subtitulo, modelo, caracteristicas, precio, stock, old_img1, old_img2 } = req.body;
     
-    const img1 = req.files['imagen1'] ? req.files['imagen1'][0].path : req.body.old_img1;
-    const img2 = req.files['imagen2'] ? req.files['imagen2'][0].path : req.body.old_img2;
+    let img1 = old_img1 || null;
+    let img2 = old_img2 || null;
+
+    if (req.files && req.files.length > 0) {
+        const f1 = req.files.find(f => f.fieldname === 'imagen1') || req.files[0];
+        const f2 = req.files.find(f => f.fieldname === 'imagen2') || req.files[1];
+        if (f1) img1 = f1.path;
+        if (f2 && f2 !== f1) img2 = f2.path;
+    }
 
     const query = `UPDATE productos SET 
                     marca=?, titulo=?, subtitulo=?, modelo=?, caracteristicas=?, precio=?, stock=?, imagen1=?, imagen2=? 
@@ -240,7 +255,7 @@ app.get('/admin/pedido-estado/:id', (req, res) => {
     const { id } = req.params;
     
     db.query('SELECT estado FROM pedidos WHERE id = ?', [id], (err, rows) => {
-        if (err || rows.length === 0) return res.status(404).send("Pedido no encontrado");
+        if (err || !rows || rows.length === 0) return res.status(404).send("Pedido no encontrado");
         
         let nuevoEstado = 'pendiente';
         if (rows[0].estado === 'pendiente') nuevoEstado = 'proceso';
@@ -255,9 +270,9 @@ app.get('/admin/pedido-estado/:id', (req, res) => {
 
 // --- SECCIÓN DE PROMOCIONES ---
 
-app.post('/admin/promocion', upload.single('banner'), (req, res) => {
+app.post('/admin/promocion', upload.any(), (req, res) => {
     const { titulo, link } = req.body;
-    const imagen_url = req.file ? req.file.path : null;
+    const imagen_url = (req.files && req.files.length > 0) ? req.files[0].path : null;
 
     if (!imagen_url) return res.status(400).send("Debe subir una imagen para la promoción.");
 
@@ -281,9 +296,9 @@ app.get('/admin/eliminar-promocion/:id', (req, res) => {
 
 // --- SECCIÓN DE NOVEDADES ---
 
-app.post('/admin/novedad', upload.single('imagen_novedad'), (req, res) => {
+app.post('/admin/novedad', upload.any(), (req, res) => {
     const { tag_type, tag_text, titulo, descripcion, link } = req.body;
-    const imagen_url = req.file ? req.file.path : null;
+    const imagen_url = (req.files && req.files.length > 0) ? req.files[0].path : null;
 
     if (!imagen_url) return res.status(400).send("Debe subir una imagen para la novedad.");
 
@@ -311,11 +326,10 @@ app.get('/admin/eliminar-novedad/:id', (req, res) => {
 // --- SECCIÓN DE PROYECTOS ---
 // =============================================
 
-// Subir un proyecto (Permite hasta 4 fotos)
-app.post('/admin/proyecto', upload.array('imagenes_proyecto', 4), (req, res) => {
+// Subir un proyecto (Acepta cualquier archivo/nombre de input)
+app.post('/admin/proyecto', upload.any(), (req, res) => {
     const { badge, titulo, descripcion, ubicacion, tag1, tag2 } = req.body;
 
-    // Extraer las rutas de los archivos recibidos en req.files
     const imagenes = req.files ? req.files.map(file => file.path) : [];
     const img1 = imagenes[0] || null;
     const img2 = imagenes[1] || null;
@@ -330,7 +344,7 @@ app.post('/admin/proyecto', upload.array('imagenes_proyecto', 4), (req, res) => 
     db.query(query, [badge, titulo, descripcion, ubicacion, tag1, tag2, img1, img2, img3, img4], (err, result) => {
         if (err) {
             console.error("Error en MySQL:", err);
-            return res.send("Error al guardar el proyecto en la base de datos.");
+            return res.status(500).send("Error al guardar el proyecto en la base de datos.");
         }
         res.redirect('/admin');
     });
@@ -346,6 +360,15 @@ app.get('/admin/eliminar-proyecto/:id', (req, res) => {
         }
         res.redirect('/admin');
     });
+});
+
+// --- MANEJO DE ERRORES GLOBAL (Captura errores de Multer) ---
+app.use((err, req, res, next) => {
+    if (err) {
+        console.error('❌ Error capturado en el servidor:', err.message);
+        return res.status(400).send(`Ocurrió un problema al procesar el archivo o formulario: ${err.message}`);
+    }
+    next();
 });
 
 // --- 5. PUERTO DINÁMICO PARA RENDER ---
