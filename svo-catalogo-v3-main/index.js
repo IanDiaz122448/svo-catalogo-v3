@@ -323,12 +323,13 @@ app.get('/admin/eliminar-novedad/:id', (req, res) => {
 });
 
 // =============================================
-// --- SECCIÓN DE PROYECTOS ---
+// --- SECCIÓN DE PROYECTOS (CORREGIDA) ---
 // =============================================
 
-// Subir un proyecto (Acepta cualquier archivo/nombre de input)
-app.post('/admin/proyecto', upload.any(), (req, res) => {
-    const { badge, titulo, descripcion, ubicacion, tag1, tag2 } = req.body;
+// Manejador central para la creación de proyectos (acepta req.body.categoria y req.body.badge)
+const guardarProyecto = (req, res) => {
+    const { badge, categoria, titulo, descripcion, ubicacion, tag1, tag2 } = req.body;
+    const badgeValor = categoria || badge || 'Comercial';
 
     const imagenes = req.files ? req.files.map(file => file.path) : [];
     const img1 = imagenes[0] || null;
@@ -341,26 +342,35 @@ app.post('/admin/proyecto', upload.any(), (req, res) => {
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
-    db.query(query, [badge, titulo, descripcion, ubicacion, tag1, tag2, img1, img2, img3, img4], (err, result) => {
+    db.query(query, [badgeValor, titulo, descripcion, ubicacion, tag1, tag2, img1, img2, img3, img4], (err, result) => {
         if (err) {
-            console.error("Error en MySQL:", err);
+            console.error("❌ Error en MySQL:", err);
             return res.status(500).send("Error al guardar el proyecto en la base de datos.");
         }
-        res.redirect('/admin');
+        res.redirect('/admin#seccion-proyectos');
     });
-});
+};
 
-// Eliminar un proyecto
-app.get('/admin/eliminar-proyecto/:id', (req, res) => {
+// Soporta las rutas /proyectos y /admin/proyecto
+app.post('/proyectos', upload.any(), guardarProyecto);
+app.post('/admin/proyecto', upload.any(), guardarProyecto);
+
+// Manejador central para eliminar proyectos (soporta POST y GET)
+const eliminarProyecto = (req, res) => {
     const { id } = req.params;
     db.query('DELETE FROM proyectos WHERE id = ?', [id], (err, result) => {
         if (err) {
-            console.error("Error al eliminar el proyecto:", err);
+            console.error("❌ Error al eliminar el proyecto:", err);
             return res.status(500).send("Error al eliminar el proyecto.");
         }
-        res.redirect('/admin');
+        res.redirect('/admin#seccion-proyectos');
     });
-});
+};
+
+app.post('/proyectos/eliminar/:id', eliminarProyecto);
+app.get('/proyectos/eliminar/:id', eliminarProyecto);
+app.post('/admin/eliminar-proyecto/:id', eliminarProyecto);
+app.get('/admin/eliminar-proyecto/:id', eliminarProyecto);
 
 // --- MANEJO DE ERRORES GLOBAL (Captura errores de Multer) ---
 app.use((err, req, res, next) => {
