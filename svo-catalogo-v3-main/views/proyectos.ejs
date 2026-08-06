@@ -152,7 +152,6 @@
             justify-content: center;
         }
 
-        /* MODIFICADO: object-fit en contain y alineación centrada para evitar recortes */
         .main-media-container img, 
         .main-media-container video {
             width: 100%;
@@ -318,10 +317,10 @@
             .menu-toggle { display: block !important; }
             nav {
                 position: fixed;
-                top: 80px;
+                top: 79px;
                 left: -100%;
                 width: 100%;
-                height: calc(100vh - 80px);
+                height: calc(100vh - 79px);
                 background: #ffffff;
                 transition: 0.4s ease;
                 box-shadow: 0 4px 10px rgba(0,0,0,0.1);
@@ -356,7 +355,7 @@
             <div class="logo-text">SISTEMAS DE<br>VIDEOVIGILANCIA<br>ORIZABA</div>
         </a>
         
-        <button class="menu-toggle" id="menuToggle">
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú">
             <i class="fas fa-bars"></i>
         </button>
 
@@ -395,6 +394,8 @@
                         if (p.imagen_url2) fotos.push(p.imagen_url2);
                         if (p.imagen_url3) fotos.push(p.imagen_url3);
                         if (p.imagen_url4) fotos.push(p.imagen_url4);
+
+                        const isVideo = (url) => typeof url === 'string' && (/\.(mp4|webm|ogg|mov)$/i.test(url) || url.includes('/video/upload/'));
                     %>
                     <article class="proyecto-card">
                         <div class="proyecto-img-wrapper">
@@ -405,7 +406,7 @@
                             <!-- Contenedor de la Imagen/Video Principal -->
                             <div class="main-media-container">
                                 <% if (fotos.length > 0) { %>
-                                    <% if (fotos[0].includes('.mp4') || fotos[0].includes('/video/upload/')) { %>
+                                    <% if (isVideo(fotos[0])) { %>
                                         <video controls playsinline>
                                             <source src="<%= fotos[0] %>" type="video/mp4">
                                         </video>
@@ -423,8 +424,9 @@
                                     <% fotos.forEach((foto, index) => { %>
                                         <button type="button" 
                                                 class="thumb-btn <%= index === 0 ? 'active' : '' %>" 
-                                                onclick="changeProjectMedia(this, '<%= foto %>')">
-                                            <% if (foto.includes('.mp4') || foto.includes('/video/upload/')) { %>
+                                                data-media="<%= foto %>"
+                                                onclick="changeProjectMedia(this)">
+                                            <% if (isVideo(foto)) { %>
                                                 <i class="fas fa-play"></i>
                                             <% } else { %>
                                                 <img src="<%= foto %>" alt="Foto <%= index + 1 %>">
@@ -491,13 +493,13 @@
 
     <!-- MENÚ FLOTANTE DE CONTACTO -->
     <div class="contact-menu">
-        <a href="https://wa.me/522721569109" class="main-contact" target="_blank">
+        <a href="https://wa.me/522721569109" class="main-contact" target="_blank" rel="noopener noreferrer">
             <i class="fab fa-whatsapp"></i>
         </a>
         <a href="mailto:sistemasvorizaba@gmail.com" class="extra-contact btn-mail" data-label="Enviar Correo">
             <i class="fas fa-envelope"></i>
         </a>
-        <a href="https://facebook.com/share/1Avxru13Ca/" class="extra-contact btn-fb" target="_blank" data-label="Facebook">
+        <a href="https://facebook.com/share/1Avxru13Ca/" class="extra-contact btn-fb" target="_blank" rel="noopener noreferrer" data-label="Facebook">
             <i class="fab fa-facebook-f"></i>
         </a>
     </div>
@@ -521,8 +523,25 @@
             });
         }
 
+        // --- ACTUALIZAR CONTADOR DEL CARRITO ---
+        function updateCartBadge() {
+            const badge = document.getElementById('cartBadge');
+            if (!badge) return;
+            try {
+                const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                const totalItems = cart.reduce((acc, item) => acc + (parseInt(item.cantidad) || 1), 0);
+                badge.textContent = totalItems;
+            } catch (e) {
+                badge.textContent = '0';
+            }
+        }
+        document.addEventListener('DOMContentLoaded', updateCartBadge);
+
         // --- CAMBIAR IMAGEN/VIDEO AL HACER CLIC EN LAS MINIATURAS ---
-        function changeProjectMedia(btn, mediaUrl) {
+        function changeProjectMedia(btn) {
+            const mediaUrl = btn.getAttribute('data-media');
+            if (!mediaUrl) return;
+
             const card = btn.closest('.proyecto-card');
             const mainContainer = card.querySelector('.main-media-container');
 
@@ -530,16 +549,16 @@
             card.querySelectorAll('.thumb-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
-            // Detectar si la miniatura seleccionada es un video o una foto
-            const isVideo = mediaUrl.includes('.mp4') || mediaUrl.includes('/video/upload/');
+            // Detectar si la miniatura seleccionada es un video o una foto (soporta múltiples formatos y rutas)
+            const isVideo = /\.(mp4|webm|ogg|mov)$/i.test(mediaUrl) || mediaUrl.includes('/video/upload/');
 
             if (isVideo) {
                 mainContainer.innerHTML = `
-                    <video controls playsinline>
+                    <video controls playsinline autoPlay>
                         <source src="${mediaUrl}" type="video/mp4">
                     </video>`;
             } else {
-                mainContainer.innerHTML = `<img src="${mediaUrl}" alt="Imagen del proyecto">`;
+                mainContainer.innerHTML = `<img src="${mediaUrl}" alt="Vista del proyecto">`;
             }
         }
     </script>
