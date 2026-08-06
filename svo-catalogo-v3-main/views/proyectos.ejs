@@ -136,7 +136,7 @@
         .proyecto-img-wrapper {
             position: relative;
             width: 100%;
-            height: 220px;
+            height: 280px;
             overflow: hidden;
             background: #0f172a;
         }
@@ -164,12 +164,13 @@
         .proyecto-img-wrapper img, .proyecto-img-wrapper video {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
+            background-color: #0f172a;
             transition: transform 0.5s ease;
         }
 
         .proyecto-card:hover .proyecto-img-wrapper img {
-            transform: scale(1.05);
+            transform: scale(1.03);
         }
 
         .proyecto-tag {
@@ -315,7 +316,14 @@
             font-size: 0.9rem;
             margin-top: 60px;
         }
-        /* Ajuste de foto de proyectos */
+
+        /* Fuerza Opción 2: Foto completa sin recortes */
+        .proyecto-img-wrapper img,
+        .proyecto-card img,
+        .proyectos-container img {
+            object-fit: contain !important;
+            background-color: #0f172a !important;
+        }
     </style>
 </head>
 <body>
