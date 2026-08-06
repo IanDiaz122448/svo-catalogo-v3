@@ -136,41 +136,65 @@
         .proyecto-img-wrapper {
             position: relative;
             width: 100%;
-            height: 280px;
-            overflow: hidden;
             background: #0f172a;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Galería en cuadrícula según cantidad de fotos */
-        .proyecto-img-wrapper.grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2px;
+        .main-media-container {
+            width: 100%;
+            height: 280px;
+            position: relative;
+            overflow: hidden;
+            background-color: #0f172a;
         }
 
-        .proyecto-img-wrapper.grid-3 {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2px;
-        }
-
-        .proyecto-img-wrapper.grid-4 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr 1fr;
-            gap: 2px;
-        }
-
-        .proyecto-img-wrapper img, .proyecto-img-wrapper video {
+        .main-media-container img, 
+        .main-media-container video {
             width: 100%;
             height: 100%;
-            object-fit: contain;
-            background-color: #0f172a;
-            transition: transform 0.5s ease;
+            object-fit: cover;
+            display: block;
+            transition: opacity 0.3s ease;
         }
 
-        .proyecto-card:hover .proyecto-img-wrapper img {
-            transform: scale(1.03);
+        /* Tira de Miniaturas por Instalación */
+        .proyecto-thumbnails {
+            display: flex;
+            gap: 8px;
+            padding: 10px 15px;
+            background: #131d31;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            overflow-x: auto;
+        }
+
+        .thumb-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid transparent;
+            background: #0f172a;
+            cursor: pointer;
+            padding: 0;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+        }
+
+        .thumb-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .thumb-btn.active, 
+        .thumb-btn:hover {
+            border-color: var(--accent-color);
+            transform: scale(1.05);
         }
 
         .proyecto-tag {
@@ -316,14 +340,6 @@
             font-size: 0.9rem;
             margin-top: 60px;
         }
-
-        /* Fuerza Opción 2: Foto completa sin recortes */
-        .proyecto-img-wrapper img,
-        .proyecto-card img,
-        .proyectos-container img {
-            object-fit: contain !important;
-            background-color: #0f172a !important;
-        }
     </style>
 </head>
 <body>
@@ -376,25 +392,44 @@
                         if (p.imagen_url4) fotos.push(p.imagen_url4);
                     %>
                     <article class="proyecto-card">
-                        <div class="proyecto-img-wrapper <%= fotos.length > 1 ? 'grid-' + fotos.length : '' %>">
+                        <div class="proyecto-img-wrapper">
                             <% if (p.badge || p.categoria) { %>
                                 <span class="proyecto-tag"><%= p.badge || p.categoria %></span>
                             <% } %>
 
-                            <% if (fotos.length > 0) { %>
-                                <% fotos.forEach(foto => { %>
-                                    <% if (foto.includes('.mp4') || foto.includes('/video/upload/')) { %>
+                            <!-- Contenedor de la Imagen/Video Principal -->
+                            <div class="main-media-container">
+                                <% if (fotos.length > 0) { %>
+                                    <% if (fotos[0].includes('.mp4') || fotos[0].includes('/video/upload/')) { %>
                                         <video controls playsinline>
-                                            <source src="<%= foto %>" type="video/mp4">
+                                            <source src="<%= fotos[0] %>" type="video/mp4">
                                         </video>
                                     <% } else { %>
-                                        <img src="<%= foto %>" alt="<%= p.titulo %>">
+                                        <img src="<%= fotos[0] %>" alt="<%= p.titulo %>">
                                     <% } %>
-                                <% }) %>
-                            <% } else { %>
-                                <img src="/img/default-proyecto.jpg" alt="<%= p.titulo %>">
+                                <% } else { %>
+                                    <img src="/img/default-proyecto.jpg" alt="<%= p.titulo %>">
+                                <% } %>
+                            </div>
+
+                            <!-- Tira de Miniaturas si la Instalación tiene más de 1 Foto -->
+                            <% if (fotos.length > 1) { %>
+                                <div class="proyecto-thumbnails">
+                                    <% fotos.forEach((foto, index) => { %>
+                                        <button type="button" 
+                                                class="thumb-btn <%= index === 0 ? 'active' : '' %>" 
+                                                onclick="changeProjectMedia(this, '<%= foto %>')">
+                                            <% if (foto.includes('.mp4') || foto.includes('/video/upload/')) { %>
+                                                <i class="fas fa-play"></i>
+                                            <% } else { %>
+                                                <img src="<%= foto %>" alt="Foto <%= index + 1 %>">
+                                            <% } %>
+                                        </button>
+                                    <% }) %>
+                                </div>
                             <% } %>
                         </div>
+
                         <div class="proyecto-info">
                             <h3><%= p.titulo %></h3>
                             <p><%= p.descripcion %></p>
@@ -406,11 +441,13 @@
                     </article>
                 <% }) %>
             <% } else { %>
-                <!-- Ejemplos estáticos de muestra si aún no hay proyectos en la Base de Datos -->
+                <!-- Ejemplos estáticos de muestra -->
                 <article class="proyecto-card">
                     <div class="proyecto-img-wrapper">
                         <span class="proyecto-tag">CCTV e IP</span>
-                        <img src="/img/proyecto-cctv.jpg" alt="Instalación CCTV Comercio">
+                        <div class="main-media-container">
+                            <img src="/img/proyecto-cctv.jpg" alt="Instalación CCTV Comercio">
+                        </div>
                     </div>
                     <div class="proyecto-info">
                         <h3>Instalación de Sistema CCTV HD en Plaza Comercial</h3>
@@ -425,7 +462,9 @@
                 <article class="proyecto-card">
                     <div class="proyecto-img-wrapper">
                         <span class="proyecto-tag">Cableado Estructurado</span>
-                        <img src="/img/proyecto-redes.jpg" alt="Cableado e Infraestructura">
+                        <div class="main-media-container">
+                            <img src="/img/proyecto-redes.jpg" alt="Cableado e Infraestructura">
+                        </div>
                     </div>
                     <div class="proyecto-info">
                         <h3>Organización de Rack y Cableado UTP</h3>
@@ -475,6 +514,28 @@
                     icon.classList.add('fa-bars');
                 }
             });
+        }
+
+        // --- CAMBIAR IMAGEN/VIDEO AL HACER CLIC EN LAS MINIATURAS ---
+        function changeProjectMedia(btn, mediaUrl) {
+            const card = btn.closest('.proyecto-card');
+            const mainContainer = card.querySelector('.main-media-container');
+
+            // Cambiar clase activa en los botones
+            card.querySelectorAll('.thumb-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            // Detectar si la miniatura seleccionada es un video o una foto
+            const isVideo = mediaUrl.includes('.mp4') || mediaUrl.includes('/video/upload/');
+
+            if (isVideo) {
+                mainContainer.innerHTML = `
+                    <video controls playsinline>
+                        <source src="${mediaUrl}" type="video/mp4">
+                    </video>`;
+            } else {
+                mainContainer.innerHTML = `<img src="${mediaUrl}" alt="Imagen del proyecto">`;
+            }
         }
     </script>
 </body>
