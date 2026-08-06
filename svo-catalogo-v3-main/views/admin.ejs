@@ -517,11 +517,11 @@
                 </div>
             </div>
 
-            <!-- IMÁGENES (SOPORTE MÚLTIPLE EN EXPRESS) -->
+            <!-- IMÁGENES (SELECCIÓN MÚLTIPLE HABILIADA) -->
             <div class="form-group">
-                <label for="imagenes">IMÁGENES DE LA INSTALACIÓN REALIZADA (Puedes seleccionar varias)</label>
+                <label for="imagenes">IMÁGENES DE LA INSTALACIÓN REALIZADA (Puedes seleccionar varias fotos)</label>
                 <input type="file" name="imagenes" id="imagenes" class="form-control" multiple accept="image/*" onchange="previewImages(event)">
-                <small style="color: #888; display: block; margin-top: 5px;">Mantén presionada la tecla Ctrl (o Cmd) o Shift para elegir varias imágenes a la vez.</small>
+                <small style="color: #888; display: block; margin-top: 5px;">Mantén presionada la tecla Ctrl (o Cmd en Mac) para elegir varias imágenes a la vez en la ventana de selección.</small>
                 
                 <!-- Contenedor para previsualizar imágenes seleccionadas -->
                 <div id="image-preview-container" class="preview-grid"></div>
@@ -534,7 +534,7 @@
         </form>
     </div>
 
-    <!-- GESTIONAR PORTAFOLIO (TABLA DILATADA DINÁMICAMENTE CON EJS) -->
+    <!-- GESTIONAR PORTAFOLIO (TABLA DINÁMICA CON EJS) -->
     <div class="card-box style-marginTop">
         <h2 class="card-title">
             <i class="fas fa-briefcase"></i> GESTIONAR PORTAFOLIO
@@ -597,11 +597,12 @@
         margin-top: 12px;
     }
     .preview-thumb {
-        width: 75px;
-        height: 75px;
+        width: 80px;
+        height: 80px;
         object-fit: cover;
         border-radius: 6px;
         border: 2px solid #0099ff;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
     }
 </style>
 
@@ -613,7 +614,7 @@
         container.innerHTML = ''; // Limpiar vista previa previa
         
         const files = event.target.files;
-        if (files) {
+        if (files && files.length > 0) {
             Array.from(files).forEach(file => {
                 if (file.type.startsWith('image/')) {
                     const reader = new FileReader();
