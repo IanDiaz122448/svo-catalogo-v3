@@ -467,96 +467,213 @@
         </div>
     </div>
 
-    <!-- ==================== SECCIÓN PROYECTOS ==================== -->
-    <div id="seccion-proyectos" class="admin-section">
-        <div class="form-card">
-            <h2><i class="fas fa-folder-plus"></i> Nuevo Proyecto Destacado</h2>
+   <!-- SECCIÓN DE PROYECTOS -->
+<section id="seccion-proyectos" class="admin-section active">
+    
+    <!-- FORMULARIO NUEVO PROYECTO -->
+    <div class="card-box">
+        <h2 class="card-title">
+            <i class="fas fa-folder-plus"></i> NUEVO PROYECTO DESTACADO
+        </h2>
+
+        <form action="procesar_proyecto.php" method="POST" enctype="multipart/form-data">
             
-            <form action="/admin/proyecto" method="POST" enctype="multipart/form-data">
-                <div class="input-group">
-                    <label for="badge">Categoría del Proyecto</label>
-                    <select name="badge" id="badge" required>
-                        <option value="Comercial">Comercial</option>
-                        <option value="Residencial">Residencial</option>
-                        <option value="Infraestructura">Infraestructura</option>
-                        <option value="Industrial">Industrial</option>
-                    </select>
-                </div>
-
-                <div class="input-group">
-                    <label for="titulo_proyecto">Nombre / Título del Proyecto</label>
-                    <input type="text" name="titulo" id="titulo_proyecto" placeholder="Ej: Seguridad Perimetral Hogar" required>
-                </div>
-
-                <div class="input-group">
-                    <label for="descripcion_proyecto">Descripción del Caso de Éxito</label>
-                    <textarea name="descripcion" id="descripcion_proyecto" rows="4" placeholder="Ej: Implementación de cámaras con tecnología de visión nocturna a color..." required></textarea>
-                </div>
-
-                <div class="input-group">
-                    <label for="ubicacion">Ubicación del Proyecto</label>
-                    <input type="text" name="ubicacion" id="ubicacion" placeholder="Ej: Orizaba, Ver. / Córdoba, Ver." required>
-                </div>
-
-                <div class="file-grid">
-                    <div class="input-group">
-                        <label for="tag1">Etiqueta Técnica 1</label>
-                        <input type="text" name="tag1" id="tag1" placeholder="Ej: 4 Cámaras" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="tag2">Etiqueta Técnica 2</label>
-                        <input type="text" name="tag2" id="tag2" placeholder="Ej: Exterior" required>
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <label for="imagen_proyecto">Imagen de la Instalación Realizada</label>
-                    <input type="file" name="imagen_proyecto" id="imagen_proyecto" accept="image/*" required>
-                </div>
-
-                <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, #38bdf8, #0284c7);">
-                    <i class="fas fa-cloud-upload-alt"></i> PUBLICAR EN PORTAFOLIO
-                </button>
-            </form>
-        </div>
-
-        <div class="table-card">
-            <h2><i class="fas fa-briefcase"></i> Gestionar Portafolio</h2>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Categoría</th>
-                            <th>Título del Proyecto</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% if (typeof proyectos !== 'undefined' && proyectos && proyectos.length > 0) { %>
-                            <% proyectos.forEach(proyecto => { %>
-                                <tr>
-                                    <td><span style="color: var(--accent-color); font-weight: bold;"><%= proyecto.badge %></span></td>
-                                    <td><%= proyecto.titulo %></td>
-                                    <td class="actions">
-                                        <a href="/admin/eliminar-proyecto/<%= proyecto.id %>" 
-                                           class="btn-action btn-delete" 
-                                           title="Eliminar Proyecto"
-                                           onclick="return confirm('¿Seguro que quieres eliminar este proyecto?')">
-                                             <i class="fas fa-trash"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            <% }) %>
-                        <% } else { %>
-                            <tr>
-                                <td colspan="3" style="text-align: center; color: var(--text-muted);">No hay proyectos activos en el portafolio actualmente.</td>
-                            </tr>
-                        <% } %>
-                    </tbody>
-                </table>
+            <!-- CATEGORÍA -->
+            <div class="form-group">
+                <label for="categoria">CATEGORÍA DEL PROYECTO</label>
+                <select name="categoria" id="categoria" class="form-control" required>
+                    <option value="Comercial">Comercial</option>
+                    <option value="Residencial">Residencial</option>
+                    <option value="Industrial">Industrial</option>
+                </select>
             </div>
-        </div>
+
+            <!-- TÍTULO -->
+            <div class="form-group">
+                <label for="titulo">NOMBRE / TÍTULO DEL PROYECTO</label>
+                <input type="text" name="titulo" id="titulo" class="form-control" placeholder="Ej: Seguridad Perimetral Hogar" required>
+            </div>
+
+            <!-- DESCRIPCIÓN -->
+            <div class="form-group">
+                <label for="descripcion">DESCRIPCIÓN DEL CASO DE ÉXITO</label>
+                <textarea name="descripcion" id="descripcion" class="form-control" rows="4" placeholder="Ej: Implementación de cámaras con tecnología de visión nocturna a color..." required></textarea>
+            </div>
+
+            <!-- UBICACIÓN -->
+            <div class="form-group">
+                <label for="ubicacion">UBICACIÓN DEL PROYECTO</label>
+                <input type="text" name="ubicacion" id="ubicacion" class="form-control" placeholder="Ej: Orizaba, Ver. / Córdoba, Ver.">
+            </div>
+
+            <!-- ETIQUETAS TÉCNICAS (Doble columna) -->
+            <div class="form-row">
+                <div class="form-group col-half">
+                    <label for="tag1">ETIQUETA TÉCNICA 1</label>
+                    <input type="text" name="tag1" id="tag1" class="form-control" placeholder="Ej: 4 Cámaras">
+                </div>
+                <div class="form-group col-half">
+                    <label for="tag2">ETIQUETA TÉCNICA 2</label>
+                    <input type="text" name="tag2" id="tag2" class="form-control" placeholder="Ej: Exterior">
+                </div>
+            </div>
+
+            <!-- IMÁGENES (SOPORTE MÚLTIPLE) -->
+            <div class="form-group">
+                <label for="imagenes">IMÁGENES DE LA INSTALACIÓN REALIZADA (Puedes seleccionar varias)</label>
+                <input type="file" name="imagenes[]" id="imagenes" class="form-control" multiple accept="image/*" onchange="previewImages(event)">
+                <small style="color: #888; display: block; margin-top: 5px;">Mantén presionada la tecla Ctrl (o Cmd) o Shift para elegir varias imágenes a la vez.</small>
+                
+                <!-- Contenedor para previsualizar imágenes seleccionadas -->
+                <div id="image-preview-container" class="preview-grid"></div>
+            </div>
+
+            <!-- BOTÓN DE PUBLICAR -->
+            <button type="submit" class="btn-submit">
+                <i class="fas fa-cloud-upload-alt"></i> PUBLICAR EN PORTAFOLIO
+            </button>
+        </form>
     </div>
+
+    <!-- GESTIONAR PORTAFOLIO (TABLA) -->
+    <div class="card-box style-marginTop">
+        <h2 class="card-title">
+            <i class="fas fa-briefcase"></i> GESTIONAR PORTAFOLIO
+        </h2>
+
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>CATEGORÍA</th>
+                    <th>TÍTULO DEL PROYECTO</th>
+                    <th>ACCIONES</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Aquí imprimes los proyectos con PHP -->
+                <tr>
+                    <td><span class="badge">Comercial</span></td>
+                    <td>Ejemplo de Proyecto Registrado</td>
+                    <td>
+                        <button class="btn-action btn-edit"><i class="fas fa-edit"></i> Editar</button>
+                        <button class="btn-action btn-delete"><i class="fas fa-trash"></i> Eliminar</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</section>
+
+<!-- ESTILOS ADICIONALES PARA LA PREVISUALIZACIÓN Y GRID -->
+<style>
+    .form-row {
+        display: flex;
+        gap: 15px;
+    }
+    .col-half {
+        flex: 1;
+    }
+    .style-marginTop {
+        margin-top: 25px;
+    }
+    /* Estilo para miniaturas de imágenes seleccionadas */
+    .preview-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 12px;
+    }
+    .preview-thumb {
+        width: 75px;
+        height: 75px;
+        object-fit: cover;
+        border-radius: 6px;
+        border: 2px solid #0099ff;
+    }
+</style>
+
+<!-- LÓGICA JAVASCRIPT COMPLETA -->
+<script>
+    // Previsualización dinámica de múltiples imágenes seleccionadas
+    function previewImages(event) {
+        const container = document.getElementById('image-preview-container');
+        container.innerHTML = ''; // Limpiar vista previa previa
+        
+        const files = event.target.files;
+        if (files) {
+            Array.from(files).forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.classList.add('preview-thumb');
+                        container.appendChild(img);
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    }
+
+    // Función para cambiar de sección / pestaña
+    function showSection(sectionId, element) {
+        // 1. Ocultar todas las secciones
+        document.querySelectorAll('.admin-section').forEach(sec => {
+            sec.classList.remove('active');
+        });
+        
+        // 2. Quitar la clase activa de todos los botones
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // 3. Mostrar la sección elegida y activar el botón
+        const targetSection = document.getElementById(sectionId);
+        if (targetSection) {
+            targetSection.classList.add('active');
+        }
+        if (element) {
+            element.classList.add('active');
+        }
+
+        // Actualizar el fragmento de la URL (#seccion-nombre)
+        history.replaceState(null, null, '#' + sectionId);
+    }
+
+    // Mostrar/Ocultar campo de texto de etiqueta según tipo
+    function toggleTagText() {
+        const tagTypeSelect = document.getElementById('tag_type');
+        const groupTagText = document.getElementById('group_tag_text');
+        const tagTextInput = document.getElementById('tag_text');
+
+        if (tagTypeSelect && groupTagText) {
+            if (tagTypeSelect.value === 'Fecha') {
+                groupTagText.style.display = 'block';
+                tagTextInput.setAttribute('required', 'required');
+            } else {
+                groupTagText.style.display = 'none';
+                tagTextInput.removeAttribute('required');
+                tagTextInput.value = '';
+            }
+        }
+    }
+
+    // Mantener la pestaña activa si se especifica un Hash en la URL al cargar
+    document.addEventListener('DOMContentLoaded', () => {
+        const hash = window.location.hash.replace('#', '');
+        if (hash) {
+            const targetBtn = document.querySelector(`button[onclick*="${hash}"]`);
+            if (targetBtn) {
+                showSection(hash, targetBtn);
+            }
+        }
+        toggleTagText();
+    });
+</script>
+</body>
+</html>
 
     <!-- ==================== SECCIÓN BANNERS ==================== -->
     <div id="seccion-banners" class="admin-section">
